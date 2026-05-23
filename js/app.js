@@ -1,4 +1,11 @@
-// ── CATEGORIES ──────────────────────────────────────────────
+// ── STORAGE KEYS ─────────────────────────────────────────────
+const LS_GEMINI  = 'tubeboost_gemini_key';
+const LS_GTOKEN  = 'tubeboost_gh_token';
+const LS_GREPO   = 'tubeboost_gh_repo';
+const LS_REMEMBER = 'tubeboost_remember';
+const LS_NOTICE  = 'tubeboost_notice_dismissed';
+
+// ── CATEGORIES ───────────────────────────────────────────────
 const CATEGORIES = [
   'Gaming','Vlog','Tutorial','Receita','Fitness','Música',
   'Comédia','Educação','Tecnologia','Esporte','Notícias',
@@ -9,6 +16,74 @@ let selectedCategory = '';
 let selectedFile = null;
 let analysisResult = null;
 
+// ── SECURITY NOTICE ──────────────────────────────────────────
+function dismissNotice() {
+  document.getElementById('securityNotice').style.display = 'none';
+  localStorage.setItem(LS_NOTICE, '1');
+}
+
+// ── LOCALSTORAGE — SAVE / LOAD / CLEAR ───────────────────────
+function loadSavedKeys() {
+  const remember = localStorage.getItem(LS_REMEMBER) === '1';
+  const checkbox = document.getElementById('rememberKeys');
+  checkbox.checked = remember;
+
+  if (remember) {
+    const gemini = localStorage.getItem(LS_GEMINI);
+    const token  = localStorage.getItem(LS_GTOKEN);
+    const repo   = localStorage.getItem(LS_GREPO);
+    if (gemini) document.getElementById('geminiKey').value = gemini;
+    if (token)  document.getElementById('githubToken').value = token;
+    if (repo)   document.getElementById('githubRepo').value = repo;
+    showSavedState(true);
+  }
+
+  if (localStorage.getItem(LS_NOTICE) === '1') {
+    document.getElementById('securityNotice').style.display = 'none';
+  }
+}
+
+function saveKeysIfNeeded() {
+  if (localStorage.getItem(LS_REMEMBER) !== '1') return;
+  const gemini = document.getElementById('geminiKey').value.trim();
+  const token  = document.getElementById('githubToken').value.trim();
+  const repo   = document.getElementById('githubRepo').value.trim();
+  if (gemini) localStorage.setItem(LS_GEMINI, gemini);
+  if (token)  localStorage.setItem(LS_GTOKEN, token);
+  if (repo)   localStorage.setItem(LS_GREPO, repo);
+}
+
+function handleRememberChange() {
+  const checked = document.getElementById('rememberKeys').checked;
+  localStorage.setItem(LS_REMEMBER, checked ? '1' : '0');
+  if (checked) {
+    saveKeysIfNeeded();
+    showSavedState(true);
+    showToast('Dados salvos', 'Suas chaves foram salvas no armazenamento local deste navegador.', 3500);
+  } else {
+    clearSavedKeys(false);
+    showSavedState(false);
+  }
+}
+
+function clearSavedKeys(showFeedback = true) {
+  localStorage.removeItem(LS_GEMINI);
+  localStorage.removeItem(LS_GTOKEN);
+  localStorage.removeItem(LS_GREPO);
+  localStorage.removeItem(LS_REMEMBER);
+  document.getElementById('rememberKeys').checked = false;
+  showSavedState(false);
+  if (showFeedback) {
+    showToast('Dados apagados', 'Todas as chaves salvas foram removidas deste dispositivo.', 3500);
+  }
+}
+
+function showSavedState(saved) {
+  document.getElementById('savedBadge').style.display = saved ? 'inline-flex' : 'none';
+  document.getElementById('btnClear').style.display   = saved ? 'flex' : 'none';
+}
+
+// ── CATEGORIES ───────────────────────────────────────────────
 function initCategories() {
   const wrap = document.getElementById('catButtons');
   CATEGORIES.forEach(cat => {
@@ -38,9 +113,9 @@ function getCategory() {
   return custom || selectedCategory || 'Geral';
 }
 
-// ── FILE HANDLING ────────────────────────────────────────────
+// ── FILE HANDLING ─────────────────────────────────────────────
 function initUpload() {
-  const zone = document.getElementById('uploadZone');
+  const zone  = document.getElementById('uploadZone');
   const input = document.getElementById('videoInput');
 
   zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
@@ -50,14 +125,13 @@ function initUpload() {
     zone.classList.remove('dragover');
     if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
   });
-
   input.addEventListener('change', () => { if (input.files[0]) setFile(input.files[0]); });
 }
 
 function setFile(file) {
-  const allowedExt = ['mp4','mov','avi','webm'];
-  const ext = file.name.split('.').pop().toLowerCase();
+  const allowedExt  = ['mp4','mov','avi','webm'];
   const allowedMime = ['video/mp4','video/quicktime','video/avi','video/webm','video/x-msvideo'];
+  const ext = file.name.split('.').pop().toLowerCase();
   if (!allowedMime.includes(file.type) && !allowedExt.includes(ext)) {
     showToast('Formato inválido', 'Selecione um arquivo MP4, MOV, AVI ou WebM.');
     return;
@@ -74,14 +148,13 @@ function removeFile() {
   document.getElementById('fileSelected').style.display = 'none';
 }
 
-function formatBytes(bytes) {
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+function formatBytes(b) {
+  return b < 1048576 ? (b / 1024).toFixed(1) + ' KB' : (b / 1048576).toFixed(1) + ' MB';
 }
 
-// ── PASSWORD TOGGLE ──────────────────────────────────────────
-function togglePw(inputId, btn) {
-  const input = document.getElementById(inputId);
+// ── PASSWORD TOGGLE ───────────────────────────────────────────
+function togglePw(id, btn) {
+  const input = document.getElementById(id);
   input.type = input.type === 'password' ? 'text' : 'password';
 }
 
@@ -89,34 +162,29 @@ function togglePw(inputId, btn) {
 function setStep(n, state, subtext) {
   const icon = document.getElementById('step' + n + 'icon');
   const sub  = document.getElementById('step' + n + 'sub');
-
   icon.className = 'step-icon';
-
-  const icons = {
+  const svgs = {
     active: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`,
     done:   `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
-    error:  `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`
+    error:  `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
   };
-
-  if (state === 'active') { icon.classList.add('active', 'spin'); }
-  else if (state === 'done') { icon.classList.add('done'); }
+  if (state === 'active') icon.classList.add('active', 'spin');
+  else if (state === 'done')  icon.classList.add('done');
   else if (state === 'error') { icon.style.background = 'rgba(255,45,45,0.15)'; icon.style.color = 'var(--red)'; }
-
-  if (icons[state]) icon.innerHTML = icons[state];
+  if (svgs[state]) icon.innerHTML = svgs[state];
   if (sub && subtext) sub.textContent = subtext;
 }
 
-// ── MAIN ANALYSIS ────────────────────────────────────────────
+// ── MAIN ANALYSIS ─────────────────────────────────────────────
 async function startAnalysis() {
   const apiKey = document.getElementById('geminiKey').value.trim();
-  if (!apiKey) { showToast('API Key necessária', 'Cole sua Gemini API Key no campo de configuração.'); return; }
-  if (!selectedFile) { showToast('Vídeo necessário', 'Selecione um arquivo de vídeo antes de analisar.'); return; }
+  if (!apiKey)      { showToast('API Key necessária', 'Cole sua Gemini API Key no campo de configuração.'); return; }
+  if (!selectedFile){ showToast('Vídeo necessário', 'Selecione um arquivo de vídeo antes de analisar.'); return; }
+
+  saveKeysIfNeeded();
 
   const category = getCategory();
-
-  document.getElementById('uploadCard').style.display = 'none';
-  document.getElementById('categoryCard').style.display = 'none';
-  document.getElementById('configCard').style.display = 'none';
+  ['uploadCard','categoryCard','configCard'].forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById('progressCard').classList.add('active');
   document.getElementById('resultsSection').classList.remove('active');
 
@@ -136,7 +204,6 @@ async function startAnalysis() {
     analysisResult = result;
     await delay(500);
     showResults(result);
-
   } catch (err) {
     console.error(err);
     showToast('Erro na análise', err.message || 'Verifique sua API Key e tente novamente.');
@@ -144,28 +211,28 @@ async function startAnalysis() {
   }
 }
 
-// ── GEMINI FILES API UPLOAD ──────────────────────────────────
+// ── UPLOAD TO GEMINI ──────────────────────────────────────────
 async function uploadVideoToGemini(apiKey, file) {
-  const uploadUrl = `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${apiKey}`;
-
-  const initRes = await fetch(uploadUrl, {
-    method: 'POST',
-    headers: {
-      'X-Goog-Upload-Protocol': 'resumable',
-      'X-Goog-Upload-Command': 'start',
-      'X-Goog-Upload-Header-Content-Length': file.size,
-      'X-Goog-Upload-Header-Content-Type': file.type || 'video/mp4',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ file: { display_name: file.name } }),
-  });
-
+  const initRes = await fetch(
+    `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: {
+        'X-Goog-Upload-Protocol': 'resumable',
+        'X-Goog-Upload-Command': 'start',
+        'X-Goog-Upload-Header-Content-Length': file.size,
+        'X-Goog-Upload-Header-Content-Type': file.type || 'video/mp4',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ file: { display_name: file.name } }),
+    }
+  );
   if (!initRes.ok) throw new Error('Falha ao iniciar upload: ' + await initRes.text());
 
-  const uploadSessionUrl = initRes.headers.get('X-Goog-Upload-URL');
-  if (!uploadSessionUrl) throw new Error('URL de upload não retornada pelo servidor.');
+  const uploadUrl = initRes.headers.get('X-Goog-Upload-URL');
+  if (!uploadUrl) throw new Error('URL de upload não retornada pelo servidor.');
 
-  const uploadRes = await fetch(uploadSessionUrl, {
+  const uploadRes = await fetch(uploadUrl, {
     method: 'POST',
     headers: {
       'Content-Length': file.size,
@@ -175,18 +242,17 @@ async function uploadVideoToGemini(apiKey, file) {
     },
     body: file,
   });
-
   if (!uploadRes.ok) throw new Error('Falha ao enviar arquivo: ' + await uploadRes.text());
 
   const data = await uploadRes.json();
   return data.file?.uri || data.file?.name;
 }
 
-// ── WAIT FOR FILE ACTIVE ─────────────────────────────────────
+// ── WAIT FOR FILE ACTIVE ──────────────────────────────────────
 async function waitForFileActive(apiKey, fileUri) {
-  const fileName = fileUri.includes('/files/') ? fileUri.split('/files/')[1] : fileUri;
+  const name = fileUri.includes('/files/') ? fileUri.split('/files/')[1] : fileUri;
   for (let i = 0; i < 60; i++) {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/files/${fileName}?key=${apiKey}`);
+    const res  = await fetch(`https://generativelanguage.googleapis.com/v1beta/files/${name}?key=${apiKey}`);
     if (!res.ok) throw new Error('Erro ao verificar status do arquivo.');
     const data = await res.json();
     if (data.state === 'ACTIVE') return;
@@ -196,10 +262,9 @@ async function waitForFileActive(apiKey, fileUri) {
   throw new Error('Timeout: o arquivo demorou demais para processar.');
 }
 
-// ── GEMINI GENERATE ──────────────────────────────────────────
+// ── GEMINI GENERATE ───────────────────────────────────────────
 async function analyzeWithGemini(apiKey, fileUri, category, fileName) {
-  const model = 'gemini-2.0-flash';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
   const prompt = `Você é um especialista em YouTube e marketing de vídeo. Analise este vídeo e retorne SOMENTE um JSON com esta estrutura exata (sem markdown, sem texto extra):
 
@@ -221,18 +286,16 @@ Títulos em português BR, chamativos, otimizados para CTR.
 Tags variadas (específicas e amplas), relevantes para SEO.
 Responda SOMENTE com o JSON.`;
 
-  const body = {
-    contents: [{ parts: [
-      { file_data: { mime_type: selectedFile.type || 'video/mp4', file_uri: fileUri } },
-      { text: prompt }
-    ]}],
-    generation_config: { temperature: 0.7, response_mime_type: 'application/json' }
-  };
-
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      contents: [{ parts: [
+        { file_data: { mime_type: selectedFile.type || 'video/mp4', file_uri: fileUri } },
+        { text: prompt }
+      ]}],
+      generation_config: { temperature: 0.7, response_mime_type: 'application/json' }
+    }),
   });
 
   if (!res.ok) {
@@ -241,28 +304,25 @@ Responda SOMENTE com o JSON.`;
   }
 
   const data = await res.json();
-  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  const raw  = data.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!raw) throw new Error('Resposta vazia do Gemini.');
-
-  const cleaned = raw.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
-  return JSON.parse(cleaned);
+  return JSON.parse(raw.replace(/^```json\s*/i,'').replace(/```\s*$/i,'').trim());
 }
 
-// ── SHOW RESULTS ─────────────────────────────────────────────
+// ── SHOW RESULTS ──────────────────────────────────────────────
 function showResults(r) {
   document.getElementById('progressCard').classList.remove('active');
   document.getElementById('resultsSection').classList.add('active');
 
-  // SCORE
+  // Score
   const score = Math.min(100, Math.max(0, Number(r.score) || 0));
-  const circumference = 2 * Math.PI * 44;
-  const offset = circumference - (score / 100) * circumference;
+  const circ  = 2 * Math.PI * 44;
   const color = score >= 75 ? '#00e676' : score >= 50 ? '#FFD600' : score >= 30 ? '#ff9800' : '#FF2D2D';
 
   const fill = document.getElementById('scoreFill');
   fill.style.stroke = color;
-  fill.style.strokeDasharray = circumference;
-  setTimeout(() => { fill.style.strokeDashoffset = offset; }, 50);
+  fill.style.strokeDasharray = circ;
+  setTimeout(() => { fill.style.strokeDashoffset = circ - (score / 100) * circ; }, 50);
 
   const numEl = document.getElementById('scoreNum');
   numEl.style.color = color;
@@ -272,15 +332,14 @@ function showResults(r) {
   document.getElementById('scoreTitle').style.color = color;
   document.getElementById('scoreVerdict').textContent = r.verdict || '';
 
-  // TITLES
+  // Titles
   const titlesList = document.getElementById('titlesList');
   titlesList.innerHTML = '';
-  const titles = Array.isArray(r.titles) ? r.titles.slice(0, 3) : [];
-  titles.forEach((title, i) => {
+  (Array.isArray(r.titles) ? r.titles.slice(0,3) : []).forEach((title, i) => {
     const div = document.createElement('div');
     div.className = 'title-item';
     div.innerHTML = `
-      <span class="title-num">${i + 1}</span>
+      <span class="title-num">${i+1}</span>
       <div class="title-content">
         <div class="title-text">${escHtml(title)}</div>
         <div class="title-chars"><span>${title.length}</span> / 70 caracteres</div>
@@ -292,34 +351,32 @@ function showResults(r) {
     titlesList.appendChild(div);
   });
 
-  // TAGS
-  const tagStr = typeof r.tags === 'string' ? r.tags : (Array.isArray(r.tags) ? r.tags.join(', ') : '');
+  // Tags
+  const tagStr  = typeof r.tags === 'string' ? r.tags : (Array.isArray(r.tags) ? r.tags.join(', ') : '');
   const tagList = document.getElementById('tagsList');
   tagList.innerHTML = '';
-  const tags = tagStr.split(',').map(t => t.trim()).filter(Boolean);
-  let totalChars = 0;
-  const usedTags = [];
-  tags.forEach(tag => {
-    const needed = totalChars === 0 ? tag.length : tag.length + 2;
-    if (totalChars + needed <= 500) {
-      totalChars += needed;
-      usedTags.push(tag);
+  let total = 0;
+  const used = [];
+  tagStr.split(',').map(t => t.trim()).filter(Boolean).forEach(tag => {
+    const needed = total === 0 ? tag.length : tag.length + 2;
+    if (total + needed <= 500) {
+      total += needed; used.push(tag);
       const chip = document.createElement('span');
       chip.className = 'tag-chip';
       chip.textContent = tag;
       tagList.appendChild(chip);
     }
   });
-  const tagsStr = usedTags.join(', ');
+  const tagsStr = used.join(', ');
   const counter = document.getElementById('tagsCounter');
   counter.innerHTML = `<strong>${tagsStr.length}</strong> / 500 caracteres`;
   counter.className = 'tags-counter' + (tagsStr.length > 500 ? ' over' : '');
   window._tagsStr = tagsStr;
 
-  // POLICY
-  const issues = Array.isArray(r.policyIssues) ? r.policyIssues.filter(Boolean) : [];
+  // Policy
+  const issues     = Array.isArray(r.policyIssues) ? r.policyIssues.filter(Boolean) : [];
   const policyCard = document.getElementById('policyCard');
-  const policyItems = document.getElementById('policyItems');
+  const policyItems= document.getElementById('policyItems');
   policyItems.innerHTML = '';
 
   if (issues.length === 0) {
@@ -341,10 +398,9 @@ function showResults(r) {
     });
   }
 
-  // GitHub push card
-  const githubToken = document.getElementById('githubToken').value.trim();
-  const githubRepo = document.getElementById('githubRepo').value.trim();
-  if (githubToken && githubRepo) document.getElementById('githubPushCard').classList.add('active');
+  // GitHub card
+  const hasGitHub = document.getElementById('githubToken').value.trim() && document.getElementById('githubRepo').value.trim();
+  if (hasGitHub) document.getElementById('githubPushCard').classList.add('active');
 
   document.getElementById('scoreCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -360,9 +416,8 @@ function copyText(text, btn) {
 }
 
 function copyAllTags() {
-  const tags = window._tagsStr || '';
-  navigator.clipboard.writeText(tags).then(() => {
-    const btn = document.getElementById('btnCopyTags');
+  navigator.clipboard.writeText(window._tagsStr || '').then(() => {
+    const btn  = document.getElementById('btnCopyTags');
     const orig = btn.innerHTML;
     btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copiadas!`;
     btn.classList.add('copied');
@@ -370,7 +425,7 @@ function copyAllTags() {
   }).catch(() => showToast('Erro', 'Não foi possível copiar.'));
 }
 
-// ── GITHUB PUSH ──────────────────────────────────────────────
+// ── GITHUB PUSH ───────────────────────────────────────────────
 async function pushToGitHub() {
   const token  = document.getElementById('githubToken').value.trim();
   const repo   = document.getElementById('githubRepo').value.trim();
@@ -389,82 +444,61 @@ async function pushToGitHub() {
   status.textContent = 'Enviando para o GitHub...';
 
   try {
-    // Fetch all files of this project to push
-    const files = [
-      { path: 'index.html' },
-      { path: 'css/style.css' },
-      { path: 'js/app.js' },
-    ];
-
-    for (const file of files) {
-      const res = await fetch(file.path);
-      const text = await res.text();
+    const paths = ['index.html', 'css/style.css', 'js/app.js'];
+    for (const path of paths) {
+      const text    = await fetch(path).then(r => r.text());
       const encoded = btoa(unescape(encodeURIComponent(text)));
 
-      const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${file.path}`, {
+      const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
         headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' }
       });
-      const sha = getRes.ok ? (await getRes.json()).sha : undefined;
-
+      const sha  = getRes.ok ? (await getRes.json()).sha : undefined;
       const body = { message: msg, content: encoded };
       if (sha) body.sha = sha;
 
-      const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${file.path}`, {
+      const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
         method: 'PUT',
-        headers: {
-          Authorization: 'Bearer ' + token,
-          Accept: 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
+        headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-
-      if (!putRes.ok) {
-        const err = await putRes.json();
-        throw new Error(err.message || 'Erro ao enviar ' + file.path);
-      }
+      if (!putRes.ok) { const e = await putRes.json(); throw new Error(e.message || 'Erro em ' + path); }
     }
 
-    const user = repo.split('/')[0];
-    const repoName = repo.split('/')[1];
+    const [user, repoName] = repo.split('/');
     const pageUrl = `https://${user}.github.io/${repoName}/`;
-    status.className = 'push-status success';
-    status.innerHTML = `✓ Push realizado! Site em: <a href="${pageUrl}" target="_blank" rel="noopener" style="color:var(--green)">${pageUrl}</a>`;
+    status.className  = 'push-status success';
+    status.innerHTML  = `✓ Push realizado! Site em: <a href="${pageUrl}" target="_blank" rel="noopener" style="color:var(--green)">${pageUrl}</a>`;
   } catch (err) {
-    status.className = 'push-status error';
+    status.className  = 'push-status error';
     status.textContent = '✗ Erro: ' + (err.message || 'Falha no push.');
   } finally {
     btn.disabled = false;
   }
 }
 
-// ── RESET ────────────────────────────────────────────────────
+// ── RESET ─────────────────────────────────────────────────────
 function resetApp() {
   selectedFile = null;
   analysisResult = null;
   document.getElementById('fileSelected').style.display = 'none';
   document.getElementById('videoInput').value = '';
 
-  ['uploadCard','categoryCard','configCard'].forEach(id => {
-    document.getElementById(id).style.display = 'block';
-  });
-
+  ['uploadCard','categoryCard','configCard'].forEach(id => document.getElementById(id).style.display = 'block');
   document.getElementById('progressCard').classList.remove('active');
   document.getElementById('resultsSection').classList.remove('active');
   document.getElementById('githubPushCard').classList.remove('active');
   document.getElementById('pushStatus').textContent = '';
 
-  const defaultIcons = [
+  const defaultSvgs = [
     `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>`,
     `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
     `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
   ];
-
   for (let i = 1; i <= 3; i++) {
     const icon = document.getElementById('step' + i + 'icon');
     icon.className = 'step-icon';
-    icon.style = '';
-    icon.innerHTML = defaultIcons[i - 1];
+    icon.removeAttribute('style');
+    icon.innerHTML = defaultSvgs[i - 1];
     const sub = document.getElementById('step' + i + 'sub');
     if (sub) sub.textContent = 'Aguardando...';
   }
@@ -472,30 +506,25 @@ function resetApp() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── UTILS ────────────────────────────────────────────────────
-function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+// ── UTILS ─────────────────────────────────────────────────────
+const delay    = ms => new Promise(r => setTimeout(r, ms));
+const escHtml  = s  => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function animateNum(el, from, to, duration) {
+function animateNum(el, from, to, dur) {
   const start = performance.now();
-  const step = now => {
-    const t = Math.min(1, (now - start) / duration);
-    const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
-    el.textContent = Math.round(from + (to - from) * ease);
+  const step  = now => {
+    const t = Math.min(1, (now - start) / dur);
+    const e = t < .5 ? 2*t*t : -1+(4-2*t)*t;
+    el.textContent = Math.round(from + (to - from) * e);
     if (t < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
 }
 
 function showToast(title, msg, duration = 5000) {
-  const toast = document.getElementById('toast');
   document.getElementById('toastTitle').textContent = title;
-  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastMsg').textContent   = msg;
+  const toast = document.getElementById('toast');
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), duration);
 }
@@ -503,3 +532,4 @@ function showToast(title, msg, duration = 5000) {
 // ── INIT ─────────────────────────────────────────────────────
 initCategories();
 initUpload();
+loadSavedKeys();
