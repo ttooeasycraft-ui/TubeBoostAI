@@ -1,7 +1,6 @@
 // ── CONSTANTS ─────────────────────────────────────────────────
-const DEMO_KEY   = 'AIzaSyCZlA_6lAYpoxA88yLrZl21Bgipi9m2uIM';
-const LS_KEY     = 'tbai_key';
-const LS_REMEMBER= 'tbai_remember';
+const LS_KEY      = 'tbai_key';
+const LS_REMEMBER = 'tbai_remember';
 
 const CATEGORIES = [
   'Gaming','Vlog','Tutorial','Receita','Fitness','Música',
@@ -166,10 +165,13 @@ function showClearBtn(show) {
   if (btn) btn.style.display = show ? 'flex' : 'none';
 }
 
-// ── FREE ANALYSIS ─────────────────────────────────────────────
+// ── FREE ANALYSIS (sem API Key) ───────────────────────────────
+// Estratégia: busca metadados públicos do YouTube via oEmbed (sem key),
+// depois envia para Pollinations AI (serviço gratuito, sem autenticação).
+
 async function startFreeAnalysis() {
-  const url = document.getElementById('freeYtUrl').value.trim();
-  if (!url || !url.includes('youtube.com') && !url.includes('youtu.be')) {
+  const rawUrl = document.getElementById('freeYtUrl').value.trim();
+  if (!rawUrl || (!rawUrl.includes('youtube.com') && !rawUrl.includes('youtu.be'))) {
     showToast('Link inválido', 'Cole um link válido do YouTube (youtube.com ou youtu.be).');
     return;
   }
@@ -177,26 +179,149 @@ async function startFreeAnalysis() {
   showProgress('free');
 
   try {
-    setStep(1, 'done', 'Link do YouTube detectado');
-    setStep(2, 'active', 'Enviando para análise...');
-    await delay(400);
+    // PASSO 1 — Busca metadados via YouTube oEmbed (público, sem key)
+    setStep(1, 'active', 'Buscando informações do vídeo...');
+    const meta = await fetchYouTubeMeta(rawUrl);
+    setStep(1, 'done', `"${meta.title.substring(0,40)}…"`);
+
+    // PASSO 2 — Prepara análise
+    setStep(2, 'active', 'Preparando análise...');
+    await delay(300);
     setStep(2, 'done', 'Pronto!');
-    setStep(3, 'active', 'Gemini analisando o vídeo...');
 
+    // PASSO 3 — Envia para Pollinations AI (gratuito, sem key)
+    setStep(3, 'active', 'IA analisando os metadados...');
     const category = getCategory('free');
-    const result   = await analyzeByUrl(DEMO_KEY, url, category);
-
+    const result   = await analyzeWithPollinations(meta, category);
     setStep(3, 'done', 'Análise concluída!');
+
     await delay(500);
     showResults(result);
+
   } catch (err) {
     console.error(err);
-    showToast('Erro na análise', err.message || 'Tente novamente ou use o modo com chave própria.');
+    showToast('Erro na análise', err.message || 'Não foi possível analisar. Tente novamente.');
     backToSelector();
   }
 }
 
-// ── PRO ANALYSIS ──────────────────────────────────────────────
+// Busca título, canal e thumbnail via oEmbed público do YouTube
+async function fetchYouTubeMeta(url) {
+  const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+
+  // oEmbed não tem CORS permissivo, usamos um proxy público sem autenticação
+  const proxies = [
+    `https://api.allorigins.win/get?url=${encodeURIComponent(oembedUrl)}`,
+    `https://corsproxy.io/?${encodeURIComponent(oembedUrl)}`,
+  ];
+
+  let data = null;
+
+  for (const proxyUrl of proxies) {
+    try {
+      const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) continue;
+
+      if (proxyUrl.includes('allorigins')) {
+        const wrapper = await res.json();
+        data = JSON.parse(wrapper.contents);
+      } else {
+        data = await res.json();
+      }
+
+      if (data && data.title) break;
+    } catch (_) {
+      // tenta próximo proxy
+    }
+  }
+
+  if (!data || !data.title) {
+    // Se todos os proxies falharem, extrai o ID e cria meta básico
+    const vid = extractVideoId(url);
+    if (!vid) throw new Error('Não foi possível identificar o vídeo. Verifique o link.');
+    data = {
+      title: 'Vídeo do YouTube',
+      author_name: 'Canal do YouTube',
+      thumbnail_url: `https://img.youtube.com/vi/${vid}/hqdefault.jpg`,
+    };
+  }
+
+  return {
+    title:     data.title       || 'Vídeo do YouTube',
+    channel:   data.author_name || 'Canal do YouTube',
+    thumbnail: data.thumbnail_url || '',
+    url:       url,
+  };
+}
+
+function extractVideoId(url) {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+// Analisa os metadados com Pollinations AI — serviço gratuito, sem API Key
+async function analyzeWithPollinations(meta, category) {
+  const prompt = `Você é um especialista em YouTube e marketing de conteúdo. Analise o seguinte vídeo do YouTube com base nos metadados disponíveis e retorne SOMENTE um JSON (sem markdown, sem texto extra):
+
+Título atual do vídeo: "${meta.title}"
+Canal: "${meta.channel}"
+Categoria: "${category}"
+Link: "${meta.url}"
+
+Com base nessas informações, retorne exatamente este JSON:
+{
+  "score": <número inteiro 0-100 representando potencial viral estimado>,
+  "scoreLabel": "<Viral Explosivo | Alto Potencial | Bom | Moderado | Baixo Potencial>",
+  "verdict": "<2-3 frases analisando o potencial do vídeo, pontos fortes e sugestões de melhoria>",
+  "titles": [
+    "<título 1 otimizado para YouTube, máx 70 chars, em português BR>",
+    "<título 2 otimizado para YouTube, máx 70 chars, em português BR>",
+    "<título 3 otimizado para YouTube, máx 70 chars, em português BR>"
+  ],
+  "tags": "<tags separadas por vírgula, total máx 500 chars, para YouTube SEO em português BR>",
+  "policyIssues": []
+}
+
+Importante: seja específico para a categoria "${category}". Títulos chamativos com alta taxa de clique (CTR). Responda SOMENTE com o JSON.`;
+
+  // Pollinations AI — API pública gratuita, sem autenticação
+  const endpoint = 'https://text.pollinations.ai/openai';
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'openai',
+      messages: [
+        { role: 'system', content: 'Você é um especialista em YouTube SEO e marketing de vídeo. Responde sempre em JSON válido, sem markdown.' },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.7,
+      response_format: { type: 'json_object' },
+    }),
+    signal: AbortSignal.timeout(30000),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Serviço de análise indisponível (${res.status}). Tente novamente.`);
+  }
+
+  const data = await res.json();
+  const raw  = data.choices?.[0]?.message?.content;
+  if (!raw) throw new Error('Resposta vazia do serviço. Tente novamente.');
+
+  const cleaned = raw.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/i,'').trim();
+  return JSON.parse(cleaned);
+}
+
+// ── PRO ANALYSIS (com API Key Gemini) ─────────────────────────
 async function startProAnalysis() {
   const apiKey = document.getElementById('proApiKey').value.trim();
   if (!apiKey) {
@@ -204,7 +329,7 @@ async function startProAnalysis() {
     return;
   }
 
-  // Save key if remember is checked
+  // Salva key se "lembrar" marcado
   if (document.getElementById('rememberProKey').checked) {
     localStorage.setItem(LS_KEY, apiKey);
   }
@@ -213,7 +338,7 @@ async function startProAnalysis() {
 
   if (currentSource === 'link') {
     const url = document.getElementById('proYtUrl').value.trim();
-    if (!url || !url.includes('youtube')) {
+    if (!url || (!url.includes('youtube.com') && !url.includes('youtu.be'))) {
       showToast('Link inválido', 'Cole um link válido do YouTube.');
       return;
     }
@@ -224,7 +349,7 @@ async function startProAnalysis() {
       setStep(2, 'active', 'Enviando para análise...');
       await delay(400);
       setStep(2, 'done', 'Pronto!');
-      setStep(3, 'active', 'Gemini analisando...');
+      setStep(3, 'active', 'Gemini analisando o vídeo...');
       const result = await analyzeByUrl(apiKey, url, category);
       setStep(3, 'done', 'Análise concluída!');
       await delay(500);
@@ -236,7 +361,7 @@ async function startProAnalysis() {
     }
 
   } else {
-    // Upload
+    // Upload de arquivo
     if (!selectedFile) {
       showToast('Arquivo necessário', 'Selecione um vídeo para fazer upload.');
       return;
@@ -266,50 +391,9 @@ async function startProAnalysis() {
   }
 }
 
-// ── PROGRESS ─────────────────────────────────────────────────
-function showProgress(mode) {
-  document.getElementById('panelFree').style.display = 'none';
-  document.getElementById('panelPro').style.display  = 'none';
-  document.getElementById('modeSelector').style.display = 'none';
-  document.getElementById('progressPanel').style.display = 'block';
-  document.getElementById('resultsPanel').style.display  = 'none';
-
-  // Reset steps
-  const labels = ['Enviando vídeo', 'Processando', 'Analisando com Gemini'];
-  for (let i = 1; i <= 3; i++) {
-    const icon = document.getElementById('pstep' + i + 'icon');
-    icon.className = 'pstep-icon';
-    icon.removeAttribute('style');
-    document.getElementById('pstep' + i + 'sub').textContent = 'Aguardando...';
-  }
-  document.getElementById('pstep1icon').innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>`;
-  document.getElementById('pstep2icon').innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
-  document.getElementById('pstep3icon').innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function setStep(n, state, subtext) {
-  const icon = document.getElementById('pstep' + n + 'icon');
-  const sub  = document.getElementById('pstep' + n + 'sub');
-  icon.className = 'pstep-icon';
-  const svgs = {
-    active: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`,
-    done:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
-    error:  `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
-  };
-  if (state === 'active') icon.classList.add('active', 'spin');
-  else if (state === 'done') icon.classList.add('done');
-  else if (state === 'error') { icon.style.background = 'rgba(255,45,45,0.12)'; icon.style.color = 'var(--red)'; }
-  if (svgs[state]) icon.innerHTML = svgs[state];
-  if (sub && subtext) sub.textContent = subtext;
-}
-
 // ── GEMINI — URL ANALYSIS ─────────────────────────────────────
 async function analyzeByUrl(apiKey, ytUrl, category) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-  const prompt = buildPrompt(category, ytUrl);
 
   const res = await fetch(url, {
     method: 'POST',
@@ -318,11 +402,12 @@ async function analyzeByUrl(apiKey, ytUrl, category) {
       contents: [{
         parts: [
           { file_data: { file_uri: ytUrl, mime_type: 'video/*' } },
-          { text: prompt }
+          { text: buildGeminiPrompt(category, ytUrl) }
         ]
       }],
       generation_config: { temperature: 0.7, response_mime_type: 'application/json' }
     }),
+    signal: AbortSignal.timeout(60000),
   });
 
   if (!res.ok) {
@@ -396,11 +481,12 @@ async function analyzeByFile(apiKey, fileUri, mimeType, category, fileName) {
       contents: [{
         parts: [
           { file_data: { mime_type: mimeType || 'video/mp4', file_uri: fileUri } },
-          { text: buildPrompt(category, fileName) }
+          { text: buildGeminiPrompt(category, fileName) }
         ]
       }],
       generation_config: { temperature: 0.7, response_mime_type: 'application/json' }
     }),
+    signal: AbortSignal.timeout(60000),
   });
 
   if (!res.ok) {
@@ -414,7 +500,7 @@ async function analyzeByFile(apiKey, fileUri, mimeType, category, fileName) {
   return JSON.parse(raw.replace(/^```json\s*/i,'').replace(/```\s*$/i,'').trim());
 }
 
-function buildPrompt(category, source) {
+function buildGeminiPrompt(category, source) {
   return `Você é um especialista em YouTube e marketing de vídeo. Analise este vídeo e retorne SOMENTE um JSON com esta estrutura (sem markdown, sem texto extra):
 
 {
@@ -436,14 +522,63 @@ Tags variadas entre específicas e amplas.
 Responda SOMENTE com o JSON.`;
 }
 
+// ── PROGRESS ─────────────────────────────────────────────────
+function showProgress(mode) {
+  document.getElementById('panelFree').style.display = 'none';
+  document.getElementById('panelPro').style.display  = 'none';
+  document.getElementById('modeSelector').style.display = 'none';
+  document.getElementById('progressPanel').style.display = 'block';
+  document.getElementById('resultsPanel').style.display  = 'none';
+
+  // Reset steps
+  for (let i = 1; i <= 3; i++) {
+    const icon = document.getElementById('pstep' + i + 'icon');
+    icon.className = 'pstep-icon';
+    icon.removeAttribute('style');
+    document.getElementById('pstep' + i + 'sub').textContent = 'Aguardando...';
+  }
+
+  const icons = [
+    `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+    `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+  ];
+  icons.forEach((svg, i) => { document.getElementById('pstep'+(i+1)+'icon').innerHTML = svg; });
+
+  // Atualiza label do passo 1 conforme o modo
+  if (mode === 'free') {
+    document.getElementById('pstep1label').textContent = 'Buscando metadados do vídeo';
+  } else {
+    document.getElementById('pstep1label').textContent = currentSource === 'upload' ? 'Enviando vídeo' : 'Link do YouTube';
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setStep(n, state, subtext) {
+  const icon = document.getElementById('pstep' + n + 'icon');
+  const sub  = document.getElementById('pstep' + n + 'sub');
+  icon.className = 'pstep-icon';
+  icon.removeAttribute('style');
+  const svgs = {
+    active: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`,
+    done:   `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`,
+    error:  `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  };
+  if (state === 'active') icon.classList.add('active', 'spin');
+  else if (state === 'done')  icon.classList.add('done');
+  else if (state === 'error') { icon.style.background = 'rgba(255,45,45,0.12)'; icon.style.color = 'var(--red)'; }
+  if (svgs[state]) icon.innerHTML = svgs[state];
+  if (sub && subtext) sub.textContent = subtext;
+}
+
 // ── SHOW RESULTS ──────────────────────────────────────────────
 function showResults(r) {
   document.getElementById('progressPanel').style.display = 'none';
   document.getElementById('resultsPanel').style.display  = 'block';
 
-  // Score
   const score = Math.min(100, Math.max(0, Number(r.score) || 0));
-  const circ  = 2 * Math.PI * 52; // r=52
+  const circ  = 2 * Math.PI * 52;
   const color = score >= 75 ? '#00e676' : score >= 50 ? '#FFD600' : score >= 30 ? '#ff9800' : '#FF2D2D';
 
   const fill = document.getElementById('scoreFill');
@@ -459,7 +594,7 @@ function showResults(r) {
   document.getElementById('scoreTitle').style.color = color;
   document.getElementById('scoreVerdict').textContent = r.verdict || '';
 
-  // Titles
+  // Títulos
   const tList = document.getElementById('titlesList');
   tList.innerHTML = '';
   (Array.isArray(r.titles) ? r.titles.slice(0,3) : []).forEach((t, i) => {
@@ -499,7 +634,7 @@ function showResults(r) {
   counter.innerHTML = `<strong>${window._tagsStr.length}</strong> / 500 caracteres`;
   counter.className = 'tags-counter' + (window._tagsStr.length > 500 ? ' over' : '');
 
-  // Policy
+  // Políticas
   const issues = Array.isArray(r.policyIssues) ? r.policyIssues.filter(Boolean) : [];
   const pCard  = document.getElementById('policyCard');
   const pItems = document.getElementById('policyItems');
