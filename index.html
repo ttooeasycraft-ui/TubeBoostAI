@@ -2,915 +2,15 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0f" />
   <title>TubeBoost AI — Analisador de Vídeos YouTube com IA</title>
-  <meta name="description" content="Analise seus vídeos do YouTube com IA e maximize o potencial viral com títulos, tags e score otimizados." />
-  <style>
-    :root {
-      --red: #FF2D2D;
-      --red-dark: #cc1f1f;
-      --red-glow: rgba(255, 45, 45, 0.25);
-      --yellow: #FFD600;
-      --yellow-soft: rgba(255, 214, 0, 0.15);
-      --bg: #0a0a0f;
-      --surface: #12121a;
-      --surface2: #1a1a26;
-      --surface3: #22223a;
-      --border: #2a2a40;
-      --border-light: #3a3a55;
-      --text: #f0f0f8;
-      --text-muted: #8888aa;
-      --text-dim: #5a5a7a;
-      --green: #00e676;
-      --green-soft: rgba(0, 230, 118, 0.15);
-      --orange: #ff9800;
-      --radius: 12px;
-      --radius-sm: 8px;
-      --radius-lg: 16px;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-
-    /* ── SCROLLBAR ── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--surface); }
-    ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
-
-    /* ── HEADER ── */
-    header {
-      background: linear-gradient(180deg, rgba(10,10,15,0.98) 0%, rgba(18,18,26,0.95) 100%);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-inner {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 18px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-
-    .logo-icon {
-      width: 38px;
-      height: 38px;
-      background: var(--red);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      box-shadow: 0 0 16px var(--red-glow);
-      flex-shrink: 0;
-    }
-
-    .logo-text {
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--text);
-      letter-spacing: -0.5px;
-    }
-
-    .logo-text span { color: var(--red); }
-
-    .header-badges {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .badge {
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      padding: 4px 10px;
-      border-radius: 30px;
-      text-transform: uppercase;
-    }
-
-    .badge-beta {
-      background: linear-gradient(135deg, var(--yellow), #ffaa00);
-      color: #1a0a00;
-    }
-
-    .badge-youtube {
-      background: rgba(255, 45, 45, 0.15);
-      border: 1px solid rgba(255, 45, 45, 0.4);
-      color: var(--red);
-    }
-
-    /* ── MAIN ── */
-    main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 40px 24px 80px;
-    }
-
-    /* ── HERO ── */
-    .hero {
-      text-align: center;
-      margin-bottom: 48px;
-    }
-
-    .hero h1 {
-      font-size: 2.4rem;
-      font-weight: 900;
-      line-height: 1.15;
-      letter-spacing: -1px;
-      margin-bottom: 16px;
-      background: linear-gradient(135deg, #fff 0%, #aaa 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero h1 .accent { 
-      background: linear-gradient(135deg, var(--red) 0%, var(--yellow) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero p {
-      color: var(--text-muted);
-      font-size: 1.05rem;
-      max-width: 560px;
-      margin: 0 auto;
-    }
-
-    /* ── CARDS ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      margin-bottom: 20px;
-      transition: border-color 0.2s;
-    }
-
-    .card:hover { border-color: var(--border-light); }
-
-    .card-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .card-title svg { flex-shrink: 0; }
-
-    /* ── SETTINGS SECTION ── */
-    .settings-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    @media (max-width: 600px) {
-      .settings-grid { grid-template-columns: 1fr; }
-    }
-
-    .field-group { display: flex; flex-direction: column; gap: 6px; }
-
-    label {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      letter-spacing: 0.3px;
-    }
-
-    label .hint {
-      font-weight: 400;
-      color: var(--text-dim);
-      font-size: 0.75rem;
-    }
-
-    input[type="text"],
-    input[type="password"],
-    textarea {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-size: 0.9rem;
-      padding: 12px 14px;
-      width: 100%;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      font-family: inherit;
-      outline: none;
-    }
-
-    input[type="text"]:focus,
-    input[type="password"]:focus,
-    textarea:focus {
-      border-color: var(--red);
-      box-shadow: 0 0 0 3px var(--red-glow);
-    }
-
-    input::placeholder, textarea::placeholder { color: var(--text-dim); }
-
-    .input-password-wrap { position: relative; }
-
-    .input-password-wrap input { padding-right: 44px; }
-
-    .toggle-pw {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text-dim);
-      padding: 4px;
-      display: flex;
-      align-items: center;
-    }
-
-    .toggle-pw:hover { color: var(--text-muted); }
-
-    .github-fields { display: flex; flex-direction: column; gap: 10px; }
-
-    /* ── CATEGORIES ── */
-    .categories-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .cat-btn {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 30px;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 7px 16px;
-      transition: all 0.15s;
-      font-family: inherit;
-    }
-
-    .cat-btn:hover {
-      border-color: var(--red);
-      color: var(--text);
-    }
-
-    .cat-btn.active {
-      background: var(--red);
-      border-color: var(--red);
-      color: #fff;
-      box-shadow: 0 0 12px var(--red-glow);
-    }
-
-    .custom-cat-label {
-      font-size: 0.8rem;
-      color: var(--text-dim);
-      margin-bottom: 6px;
-    }
-
-    /* ── UPLOAD ZONE ── */
-    .upload-zone {
-      border: 2px dashed var(--border);
-      border-radius: var(--radius-lg);
-      padding: 48px 24px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-    }
-
-    .upload-zone:hover,
-    .upload-zone.dragover {
-      border-color: var(--red);
-      background: rgba(255, 45, 45, 0.04);
-    }
-
-    .upload-zone input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-    }
-
-    .upload-icon {
-      width: 56px;
-      height: 56px;
-      background: var(--surface2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      color: var(--red);
-    }
-
-    .upload-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-
-    .upload-sub {
-      font-size: 0.8rem;
-      color: var(--text-dim);
-    }
-
-    .upload-sub strong { color: var(--text-muted); }
-
-    .file-selected {
-      margin-top: 20px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .file-selected svg { color: var(--red); flex-shrink: 0; }
-
-    .file-info { flex: 1; min-width: 0; }
-
-    .file-name {
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .file-size {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-    }
-
-    .file-remove {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text-dim);
-      padding: 4px;
-      border-radius: 4px;
-      transition: color 0.15s;
-      display: flex;
-    }
-
-    .file-remove:hover { color: var(--red); }
-
-    /* ── ANALYZE BUTTON ── */
-    .btn-analyze {
-      width: 100%;
-      background: linear-gradient(135deg, var(--red) 0%, #ff5555 100%);
-      border: none;
-      border-radius: var(--radius);
-      color: #fff;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 1rem;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      padding: 16px 32px;
-      transition: all 0.2s;
-      box-shadow: 0 4px 20px var(--red-glow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 24px;
-    }
-
-    .btn-analyze:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 30px rgba(255, 45, 45, 0.4);
-    }
-
-    .btn-analyze:active:not(:disabled) { transform: translateY(0); }
-
-    .btn-analyze:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* ── PROGRESS ── */
-    .progress-card {
-      display: none;
-    }
-
-    .progress-card.active { display: block; }
-
-    .progress-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .progress-step {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
-      background: var(--surface2);
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-    }
-
-    .step-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 14px;
-      background: var(--surface3);
-      color: var(--text-dim);
-    }
-
-    .step-icon.done {
-      background: var(--green-soft);
-      color: var(--green);
-    }
-
-    .step-icon.active {
-      background: var(--red-glow);
-      color: var(--red);
-    }
-
-    .step-icon.spin svg {
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .step-text { flex: 1; }
-
-    .step-label {
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .step-sub {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-    }
-
-    /* ── RESULTS ── */
-    .results-section {
-      display: none;
-    }
-
-    .results-section.active { display: block; }
-
-    /* SCORE */
-    .score-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 32px;
-      margin-bottom: 20px;
-      display: flex;
-      gap: 28px;
-      align-items: center;
-    }
-
-    @media (max-width: 500px) {
-      .score-card { flex-direction: column; text-align: center; }
-    }
-
-    .score-circle {
-      position: relative;
-      width: 110px;
-      height: 110px;
-      flex-shrink: 0;
-    }
-
-    .score-circle svg {
-      transform: rotate(-90deg);
-    }
-
-    .score-circle .track {
-      fill: none;
-      stroke: var(--surface3);
-      stroke-width: 8;
-    }
-
-    .score-circle .fill {
-      fill: none;
-      stroke-width: 8;
-      stroke-linecap: round;
-      transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .score-value {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .score-num {
-      font-size: 2rem;
-      font-weight: 900;
-      line-height: 1;
-    }
-
-    .score-label {
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-    }
-
-    .score-info { flex: 1; min-width: 0; }
-
-    .score-title {
-      font-size: 1.35rem;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    .score-verdict {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    /* TITLES */
-    .result-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      margin-bottom: 20px;
-    }
-
-    .result-section-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .title-item {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 14px 16px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-    }
-
-    .title-item:last-child { margin-bottom: 0; }
-
-    .title-num {
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-      color: var(--red);
-      background: rgba(255, 45, 45, 0.1);
-      border: 1px solid rgba(255, 45, 45, 0.2);
-      border-radius: 4px;
-      padding: 3px 7px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .title-content { flex: 1; min-width: 0; }
-
-    .title-text {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text);
-      word-break: break-word;
-      margin-bottom: 4px;
-    }
-
-    .title-chars {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-    }
-
-    .title-chars span { color: var(--yellow); }
-
-    .btn-copy {
-      background: var(--surface3);
-      border: 1px solid var(--border-light);
-      border-radius: 6px;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 6px 12px;
-      transition: all 0.15s;
-      white-space: nowrap;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .btn-copy:hover {
-      border-color: var(--red);
-      color: var(--red);
-    }
-
-    .btn-copy.copied {
-      background: var(--green-soft);
-      border-color: var(--green);
-      color: var(--green);
-    }
-
-    /* TAGS */
-    .tags-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin-bottom: 16px;
-    }
-
-    .tag-chip {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 30px;
-      color: var(--text-muted);
-      font-size: 0.78rem;
-      font-weight: 600;
-      padding: 5px 12px;
-    }
-
-    .tags-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .tags-counter {
-      font-size: 0.8rem;
-      color: var(--text-dim);
-    }
-
-    .tags-counter strong { color: var(--yellow); }
-
-    .tags-counter.over strong { color: var(--red); }
-
-    .btn-copy-all {
-      background: linear-gradient(135deg, #FFD600 0%, #ffaa00 100%);
-      border: none;
-      border-radius: 6px;
-      color: #1a0a00;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 0.78rem;
-      font-weight: 800;
-      padding: 8px 18px;
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .btn-copy-all:hover { opacity: 0.88; transform: translateY(-1px); }
-
-    .btn-copy-all.copied {
-      background: linear-gradient(135deg, var(--green) 0%, #00c853 100%);
-    }
-
-    /* POLICY WARNING */
-    .policy-card {
-      background: rgba(255, 152, 0, 0.07);
-      border: 1px solid rgba(255, 152, 0, 0.3);
-      border-radius: var(--radius-lg);
-      padding: 24px 28px;
-      margin-bottom: 20px;
-    }
-
-    .policy-card .result-section-title {
-      color: var(--orange);
-    }
-
-    .policy-items {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .policy-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .policy-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--orange);
-      flex-shrink: 0;
-      margin-top: 7px;
-    }
-
-    .policy-ok {
-      background: var(--green-soft);
-      border-color: rgba(0, 230, 118, 0.3);
-    }
-
-    .policy-ok .result-section-title { color: var(--green); }
-
-    .policy-ok .policy-dot { background: var(--green); }
-
-    /* RESET */
-    .btn-reset {
-      display: block;
-      margin: 0 auto;
-      background: none;
-      border: 1px solid var(--border-light);
-      border-radius: var(--radius);
-      color: var(--text-muted);
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 0.88rem;
-      font-weight: 600;
-      padding: 12px 28px;
-      transition: all 0.15s;
-    }
-
-    .btn-reset:hover {
-      border-color: var(--red);
-      color: var(--red);
-    }
-
-    /* GITHUB PUSH */
-    .github-push-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      margin-bottom: 20px;
-      display: none;
-    }
-
-    .github-push-card.active { display: block; }
-
-    .btn-push {
-      background: linear-gradient(135deg, #24292e 0%, #374151 100%);
-      border: 1px solid #444;
-      border-radius: var(--radius);
-      color: #fff;
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 0.88rem;
-      font-weight: 700;
-      padding: 12px 24px;
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 14px;
-    }
-
-    .btn-push:hover:not(:disabled) {
-      background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-      transform: translateY(-1px);
-    }
-
-    .btn-push:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .push-status {
-      margin-top: 12px;
-      font-size: 0.82rem;
-      color: var(--text-dim);
-    }
-
-    .push-status.success { color: var(--green); }
-    .push-status.error { color: var(--red); }
-
-    /* ERROR TOAST */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--surface2);
-      border: 1px solid var(--red);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      max-width: 380px;
-      z-index: 999;
-      display: none;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-      animation: slideUp 0.3s ease;
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    .toast.show { display: block; }
-
-    .toast-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--red);
-      margin-bottom: 6px;
-    }
-
-    .toast-msg { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
-
-    /* FOOTER */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 32px 24px;
-      text-align: center;
-    }
-
-    .footer-inner {
-      max-width: 960px;
-      margin: 0 auto;
-    }
-
-    .footer-disclaimer {
-      font-size: 0.78rem;
-      color: var(--text-dim);
-      line-height: 1.7;
-      max-width: 640px;
-      margin: 0 auto 12px;
-    }
-
-    .footer-disclaimer strong { color: var(--text-muted); }
-
-    .footer-copy {
-      font-size: 0.72rem;
-      color: var(--text-dim);
-    }
-
-    .footer-copy span { color: var(--red); }
-
-    /* DIVIDER */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 24px 0;
-    }
-  </style>
+  <meta name="description" content="Analise seus vídeos do YouTube com IA Gemini e maximize o potencial viral com títulos, tags e score otimizados." />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- ── HEADER ── -->
 <header>
   <div class="header-inner">
     <a class="logo" href="#">
@@ -924,7 +24,7 @@
   </div>
 </header>
 
-<!-- MAIN -->
+<!-- ── MAIN ── -->
 <main>
 
   <!-- HERO -->
@@ -933,133 +33,144 @@
     <p>Envie seu vídeo e descubra o potencial viral, títulos otimizados e tags ideais para maximizar seu alcance no YouTube.</p>
   </section>
 
-  <!-- CREDENTIALS -->
+  <!-- CONFIGURAÇÃO -->
   <div class="card" id="configCard">
     <div class="card-title">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 7a2 2 0 0 1 2 2m4 0a6 6 0 0 1-7.743 5.743L11 17H9v2H7v2H4a1 1 0 0 1-1-1v-2.586a1 1 0 0 1 .293-.707l5.964-5.964A6 6 0 1 1 21 9z"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 7a2 2 0 0 1 2 2m4 0a6 6 0 0 1-7.743 5.743L11 17H9v2H7v2H4a1 1 0 0 1-1-1v-2.586a1 1 0 0 1 .293-.707l5.964-5.964A6 6 0 1 1 21 9z"/></svg>
       Configuração
     </div>
     <div class="settings-grid">
+
       <!-- GEMINI API KEY -->
       <div class="field-group">
         <label>
           Gemini API Key
-          <span class="hint"> — <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color: var(--red); text-decoration: none;">Obter chave</a></span>
+          <span class="hint"> — <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:var(--red);text-decoration:none;">Obter chave</a></span>
         </label>
         <div class="input-password-wrap">
           <input type="password" id="geminiKey" placeholder="AIza..." autocomplete="off" />
           <button class="toggle-pw" onclick="togglePw('geminiKey', this)" title="Mostrar/ocultar">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
       </div>
 
       <!-- GITHUB -->
       <div class="field-group">
-        <label>
-          GitHub Pages Deploy <span class="hint">(opcional)</span>
-        </label>
+        <label>GitHub Pages Deploy <span class="hint">(opcional)</span></label>
         <div class="github-fields">
-          <input type="password" id="githubToken" placeholder="ghp_... (Personal Access Token)" autocomplete="off" />
-          <input type="text" id="githubRepo" placeholder="usuario/nome-do-repositorio" autocomplete="off" value="ttooeasycraft-ui/TubeBoostAI" />
+          <div class="input-password-wrap">
+            <input type="password" id="githubToken" placeholder="ghp_... (Personal Access Token)" autocomplete="off" />
+            <button class="toggle-pw" onclick="togglePw('githubToken', this)" title="Mostrar/ocultar">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <input type="text" id="githubRepo" placeholder="usuario/repositorio" autocomplete="off" value="ttooeasycraft-ui/TubeBoostAI" />
         </div>
       </div>
+
     </div>
   </div>
 
-  <!-- CATEGORY -->
+  <!-- CATEGORIA -->
   <div class="card" id="categoryCard">
     <div class="card-title">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6h16M4 10h16M4 14h8M4 18h8"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6h16M4 10h16M4 14h8M4 18h8"/></svg>
       Estilo / Categoria do Vídeo
     </div>
     <div class="categories-wrap" id="catButtons"></div>
-    <p class="custom-cat-label">Categoria personalizada (se não encontrar acima):</p>
+    <p class="custom-cat-label">Categoria personalizada (se não estiver na lista):</p>
     <input type="text" id="customCategory" placeholder="Ex: ASMR, Unboxing, React, Review..." maxlength="60" />
   </div>
 
   <!-- UPLOAD -->
   <div class="card" id="uploadCard">
     <div class="card-title">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
       Upload do Vídeo
     </div>
+
     <div class="upload-zone" id="uploadZone">
       <input type="file" id="videoInput" accept="video/mp4,video/quicktime,video/avi,video/webm,.mp4,.mov,.avi,.webm" />
       <div class="upload-icon">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
       </div>
-      <p class="upload-title">Arraste seu vídeo aqui ou clique para selecionar</p>
+      <p class="upload-title">Arraste seu vídeo ou toque para selecionar</p>
       <p class="upload-sub">
-        <strong>MP4, MOV, AVI, WebM</strong> &nbsp;·&nbsp; Shorts e vídeos longos<br />
-        Vídeos longos podem levar mais tempo para processar
+        <strong>MP4 · MOV · AVI · WebM</strong><br />
+        Shorts e vídeos longos · Vídeos longos levam mais tempo
       </p>
     </div>
+
     <div class="file-selected" id="fileSelected" style="display:none">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
       <div class="file-info">
         <div class="file-name" id="fileName">video.mp4</div>
         <div class="file-size" id="fileSize">0 MB</div>
       </div>
-      <button class="file-remove" onclick="removeFile()" title="Remover arquivo">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <button class="file-remove" onclick="removeFile()" title="Remover">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
 
     <button class="btn-analyze" id="btnAnalyze" onclick="startAnalysis()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       Analisar com IA
     </button>
   </div>
 
-  <!-- PROGRESS -->
+  <!-- PROGRESSO -->
   <div class="card progress-card" id="progressCard">
     <div class="card-title">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Processando...
     </div>
     <div class="progress-steps" id="progressSteps">
+
       <div class="progress-step" id="step1">
         <div class="step-icon" id="step1icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>
         </div>
         <div class="step-text">
           <div class="step-label">Enviando vídeo</div>
           <div class="step-sub" id="step1sub">Aguardando...</div>
         </div>
       </div>
+
       <div class="progress-step" id="step2">
         <div class="step-icon" id="step2icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
         <div class="step-text">
           <div class="step-label">Processando arquivo</div>
           <div class="step-sub" id="step2sub">Aguardando upload...</div>
         </div>
       </div>
+
       <div class="progress-step" id="step3">
         <div class="step-icon" id="step3icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
         <div class="step-text">
           <div class="step-label">Analisando com Gemini AI</div>
           <div class="step-sub" id="step3sub">Aguardando...</div>
         </div>
       </div>
+
     </div>
   </div>
 
-  <!-- RESULTS -->
+  <!-- RESULTADOS -->
   <div class="results-section" id="resultsSection">
 
     <!-- SCORE -->
     <div class="score-card" id="scoreCard">
       <div class="score-circle">
-        <svg width="110" height="110" viewBox="0 0 110 110">
-          <circle class="track" cx="55" cy="55" r="46" />
-          <circle class="fill" id="scoreFill" cx="55" cy="55" r="46"
-            stroke-dasharray="289"
-            stroke-dashoffset="289"
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle class="track" cx="50" cy="50" r="44" />
+          <circle class="fill" id="scoreFill" cx="50" cy="50" r="44"
+            stroke-dasharray="276.46"
+            stroke-dashoffset="276.46"
             stroke="var(--red)" />
         </svg>
         <div class="score-value">
@@ -1073,10 +184,10 @@
       </div>
     </div>
 
-    <!-- TITLES -->
+    <!-- TÍTULOS -->
     <div class="result-card" id="titlesCard">
       <div class="result-section-title">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         Títulos Otimizados
       </div>
       <div id="titlesList"></div>
@@ -1085,48 +196,46 @@
     <!-- TAGS -->
     <div class="result-card" id="tagsCard">
       <div class="result-section-title">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
         Tags para YouTube
       </div>
       <div class="tags-wrap" id="tagsList"></div>
       <div class="tags-footer">
         <div class="tags-counter" id="tagsCounter">0 / 500 caracteres</div>
         <button class="btn-copy-all" id="btnCopyTags" onclick="copyAllTags()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           Copiar todas
         </button>
       </div>
     </div>
 
-    <!-- POLICY -->
+    <!-- POLÍTICAS -->
     <div class="policy-card" id="policyCard">
       <div class="result-section-title">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         Avisos de Políticas do YouTube
       </div>
       <div class="policy-items" id="policyItems"></div>
     </div>
 
-    <!-- GITHUB PUSH -->
+    <!-- GITHUB DEPLOY -->
     <div class="github-push-card" id="githubPushCard">
       <div class="result-section-title">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
         Deploy para GitHub Pages
       </div>
-      <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom: 10px;">
-        Envie o <code style="background:var(--surface2); padding:2px 6px; border-radius:4px; font-size:0.8rem;">index.html</code> desta ferramenta para o seu repositório GitHub Pages.
+      <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:10px;">
+        Envia os arquivos <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:0.78rem;">index.html</code>, <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:0.78rem;">css/style.css</code> e <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:0.78rem;">js/app.js</code> para o seu repositório.
       </p>
-      <input type="text" id="commitMsg" placeholder="Mensagem do commit (opcional)" style="margin-bottom:4px;" />
+      <input type="text" id="commitMsg" placeholder="Mensagem do commit (opcional)" />
       <button class="btn-push" id="btnPush" onclick="pushToGitHub()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
         Push para GitHub Pages
       </button>
       <div class="push-status" id="pushStatus"></div>
     </div>
 
-    <button class="btn-reset" onclick="resetApp()">
-      ← Analisar outro vídeo
-    </button>
+    <button class="btn-reset" onclick="resetApp()">← Analisar outro vídeo</button>
 
   </div>
 
@@ -1136,9 +245,9 @@
 <footer>
   <div class="footer-inner">
     <p class="footer-disclaimer">
-      <strong>⚠ Aviso:</strong> Os resultados fornecidos pelo TubeBoost AI são <strong>sugestões geradas por inteligência artificial</strong> e <strong>não garantem aceitação, monetização ou visibilidade</strong> pelo YouTube. O TubeBoost AI não tem afiliação com o YouTube ou o Google. Use os resultados como referência.
+      <strong>⚠ Aviso:</strong> Os resultados são <strong>sugestões geradas por IA</strong> e <strong>não garantem</strong> aceitação, monetização ou visibilidade pelo YouTube. O TubeBoost AI não tem afiliação com o YouTube ou Google.
     </p>
-    <p class="footer-copy">© 2025 TubeBoost AI &nbsp;·&nbsp; <span>♥</span> Feito com Gemini AI &nbsp;·&nbsp; Somente YouTube (versão BETA)</p>
+    <p class="footer-copy">© 2025 TubeBoost AI &nbsp;·&nbsp; <span>♥</span> Gemini AI &nbsp;·&nbsp; Somente YouTube (BETA)</p>
   </div>
 </footer>
 
@@ -1148,568 +257,6 @@
   <div class="toast-msg" id="toastMsg"></div>
 </div>
 
-<script>
-// ── CATEGORIES ──────────────────────────────────────────────
-const CATEGORIES = [
-  'Gaming','Vlog','Tutorial','Receita','Fitness','Música',
-  'Comédia','Educação','Tecnologia','Esporte','Notícias',
-  'Viagem','Moda','Negócios','Motivacional'
-];
-
-let selectedCategory = '';
-let selectedFile = null;
-let analysisResult = null;
-
-function initCategories() {
-  const wrap = document.getElementById('catButtons');
-  CATEGORIES.forEach(cat => {
-    const btn = document.createElement('button');
-    btn.className = 'cat-btn';
-    btn.textContent = cat;
-    btn.onclick = () => toggleCategory(cat, btn);
-    wrap.appendChild(btn);
-  });
-}
-
-function toggleCategory(cat, btn) {
-  const allBtns = document.querySelectorAll('.cat-btn');
-  if (selectedCategory === cat) {
-    selectedCategory = '';
-    btn.classList.remove('active');
-  } else {
-    selectedCategory = cat;
-    allBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('customCategory').value = '';
-  }
-}
-
-function getCategory() {
-  const custom = document.getElementById('customCategory').value.trim();
-  if (custom) return custom;
-  return selectedCategory || 'Geral';
-}
-
-// ── FILE HANDLING ────────────────────────────────────────────
-function initUpload() {
-  const zone = document.getElementById('uploadZone');
-  const input = document.getElementById('videoInput');
-
-  zone.addEventListener('dragover', e => {
-    e.preventDefault();
-    zone.classList.add('dragover');
-  });
-  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    zone.classList.remove('dragover');
-    const file = e.dataTransfer.files[0];
-    if (file) setFile(file);
-  });
-
-  input.addEventListener('change', () => {
-    if (input.files[0]) setFile(input.files[0]);
-  });
-}
-
-function setFile(file) {
-  const allowed = ['video/mp4','video/quicktime','video/avi','video/webm'];
-  const ext = file.name.split('.').pop().toLowerCase();
-  const allowedExt = ['mp4','mov','avi','webm'];
-  if (!allowed.includes(file.type) && !allowedExt.includes(ext)) {
-    showToast('Formato inválido', 'Selecione um arquivo MP4, MOV, AVI ou WebM.');
-    return;
-  }
-  selectedFile = file;
-  document.getElementById('fileName').textContent = file.name;
-  document.getElementById('fileSize').textContent = formatBytes(file.size);
-  document.getElementById('fileSelected').style.display = 'flex';
-  document.getElementById('uploadZone').querySelector('input').value = '';
-}
-
-function removeFile() {
-  selectedFile = null;
-  document.getElementById('fileSelected').style.display = 'none';
-}
-
-function formatBytes(bytes) {
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-}
-
-// ── PASSWORD TOGGLE ──────────────────────────────────────────
-function togglePw(inputId, btn) {
-  const input = document.getElementById(inputId);
-  if (input.type === 'password') {
-    input.type = 'text';
-    btn.title = 'Ocultar';
-  } else {
-    input.type = 'password';
-    btn.title = 'Mostrar';
-  }
-}
-
-// ── PROGRESS HELPERS ─────────────────────────────────────────
-function setStep(stepNum, state, subtext) {
-  const icon = document.getElementById('step' + stepNum + 'icon');
-  const sub = document.getElementById('step' + stepNum + 'sub');
-
-  icon.className = 'step-icon';
-
-  if (state === 'active') {
-    icon.classList.add('active', 'spin');
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
-  } else if (state === 'done') {
-    icon.classList.add('done');
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
-  } else if (state === 'error') {
-    icon.style.background = 'rgba(255,45,45,0.15)';
-    icon.style.color = 'var(--red)';
-    icon.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
-  }
-
-  if (sub && subtext) sub.textContent = subtext;
-}
-
-// ── MAIN ANALYSIS ────────────────────────────────────────────
-async function startAnalysis() {
-  const apiKey = document.getElementById('geminiKey').value.trim();
-  if (!apiKey) {
-    showToast('API Key necessária', 'Cole sua Gemini API Key no campo de configuração acima.');
-    return;
-  }
-  if (!selectedFile) {
-    showToast('Vídeo necessário', 'Selecione um arquivo de vídeo antes de analisar.');
-    return;
-  }
-
-  const category = getCategory();
-
-  // Show progress
-  document.getElementById('uploadCard').style.display = 'none';
-  document.getElementById('categoryCard').style.display = 'none';
-  document.getElementById('configCard').style.display = 'none';
-  document.getElementById('progressCard').classList.add('active');
-  document.getElementById('resultsSection').classList.remove('active');
-
-  try {
-    // STEP 1: Upload video
-    setStep(1, 'active', 'Enviando para o Google...');
-    const fileUri = await uploadVideoToGemini(apiKey, selectedFile, step1Progress => {
-      setStep(1, 'active', step1Progress);
-    });
-    setStep(1, 'done', 'Upload concluído!');
-
-    // STEP 2: Wait for file processing
-    setStep(2, 'active', 'Aguardando processamento...');
-    await waitForFileActive(apiKey, fileUri);
-    setStep(2, 'done', 'Arquivo pronto!');
-
-    // STEP 3: Analyze
-    setStep(3, 'active', 'Gemini analisando o vídeo...');
-    const result = await analyzeWithGemini(apiKey, fileUri, category, selectedFile.name);
-    setStep(3, 'done', 'Análise concluída!');
-
-    analysisResult = result;
-
-    await delay(600);
-    showResults(result);
-
-  } catch (err) {
-    console.error(err);
-    showToast('Erro na análise', err.message || 'Algo deu errado. Verifique sua API Key e tente novamente.');
-    resetApp();
-  }
-}
-
-// ── GEMINI FILES API UPLOAD ──────────────────────────────────
-async function uploadVideoToGemini(apiKey, file, onProgress) {
-  const uploadUrl = `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${apiKey}`;
-
-  // Initiate resumable upload
-  const initRes = await fetch(uploadUrl, {
-    method: 'POST',
-    headers: {
-      'X-Goog-Upload-Protocol': 'resumable',
-      'X-Goog-Upload-Command': 'start',
-      'X-Goog-Upload-Header-Content-Length': file.size,
-      'X-Goog-Upload-Header-Content-Type': file.type || 'video/mp4',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ file: { display_name: file.name } }),
-  });
-
-  if (!initRes.ok) {
-    const errText = await initRes.text();
-    throw new Error('Falha ao iniciar upload: ' + errText);
-  }
-
-  const uploadSessionUrl = initRes.headers.get('X-Goog-Upload-URL');
-  if (!uploadSessionUrl) throw new Error('URL de upload não retornada pelo servidor.');
-
-  onProgress && onProgress(`Enviando ${formatBytes(file.size)}...`);
-
-  // Upload file bytes
-  const uploadRes = await fetch(uploadSessionUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Length': file.size,
-      'X-Goog-Upload-Offset': '0',
-      'X-Goog-Upload-Command': 'upload, finalize',
-      'Content-Type': file.type || 'video/mp4',
-    },
-    body: file,
-  });
-
-  if (!uploadRes.ok) {
-    const errText = await uploadRes.text();
-    throw new Error('Falha ao enviar arquivo: ' + errText);
-  }
-
-  const uploadData = await uploadRes.json();
-  return uploadData.file?.uri || uploadData.file?.name;
-}
-
-// ── WAIT FOR FILE ACTIVE ─────────────────────────────────────
-async function waitForFileActive(apiKey, fileUri) {
-  // Extract file name from URI
-  const fileName = fileUri.includes('/files/') 
-    ? fileUri.split('/files/')[1]
-    : fileUri;
-
-  const maxAttempts = 60;
-  for (let i = 0; i < maxAttempts; i++) {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/files/${fileName}?key=${apiKey}`
-    );
-    if (!res.ok) throw new Error('Erro ao verificar status do arquivo.');
-    const data = await res.json();
-    if (data.state === 'ACTIVE') return;
-    if (data.state === 'FAILED') throw new Error('Processamento do arquivo falhou no servidor.');
-    await delay(3000);
-  }
-  throw new Error('Timeout: O arquivo demorou demais para processar.');
-}
-
-// ── GEMINI GENERATE CONTENT ──────────────────────────────────
-async function analyzeWithGemini(apiKey, fileUri, category, fileName) {
-  const model = 'gemini-2.0-flash';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-  const prompt = `Você é um especialista em YouTube e marketing de vídeo. Analise este vídeo e retorne um JSON estrito com a seguinte estrutura (sem markdown, sem texto extra, só o JSON):
-
-{
-  "score": <número inteiro de 0 a 100 representando o potencial viral>,
-  "scoreLabel": "<rótulo curto como: Viral Explosivo, Alto Potencial, Bom, Moderado, Baixo Potencial>",
-  "verdict": "<2-3 frases explicando o score, pontos fortes e fracos do vídeo para o YouTube>",
-  "titles": [
-    "<título 1 otimizado para YouTube, máx 70 caracteres>",
-    "<título 2 otimizado para YouTube, máx 70 caracteres>",
-    "<título 3 otimizado para YouTube, máx 70 caracteres>"
-  ],
-  "tags": "<todas as tags separadas por vírgula, total máx 500 caracteres, relevantes para YouTube SEO>",
-  "policyIssues": [
-    "<aviso 1 sobre possível problema com políticas do YouTube, ou vazio se não houver>",
-    "<aviso 2 se houver>"
-  ]
-}
-
-Contexto do criador:
-- Categoria/Estilo do vídeo: ${category}
-- Nome do arquivo: ${fileName}
-
-Importante:
-- Os títulos devem ser em português do Brasil, chamativos e otimizados para CTR
-- As tags devem ser relevantes, variadas (específicas e amplas) e respeitar 500 chars total
-- O score deve refletir realismo: viralidade depende de miniatura (não avaliável), conteúdo, retenção, nicho
-- Se não houver problemas de política, retorne policyIssues como array vazio []
-- Responda SOMENTE com o JSON, sem texto adicional`;
-
-  const body = {
-    contents: [{
-      parts: [
-        { file_data: { mime_type: selectedFile.type || 'video/mp4', file_uri: fileUri } },
-        { text: prompt }
-      ]
-    }],
-    generation_config: {
-      temperature: 0.7,
-      response_mime_type: 'application/json',
-    }
-  };
-
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    const errData = await res.json().catch(() => ({}));
-    const msg = errData.error?.message || res.statusText;
-    throw new Error('Gemini API: ' + msg);
-  }
-
-  const data = await res.json();
-  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!raw) throw new Error('Resposta vazia do Gemini.');
-
-  // Parse JSON (strip possible markdown fences)
-  const cleaned = raw.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
-  return JSON.parse(cleaned);
-}
-
-// ── SHOW RESULTS ─────────────────────────────────────────────
-function showResults(r) {
-  document.getElementById('progressCard').classList.remove('active');
-  document.getElementById('resultsSection').classList.add('active');
-
-  // SCORE
-  const score = Math.min(100, Math.max(0, Number(r.score) || 0));
-  const circumference = 2 * Math.PI * 46; // r=46
-  const offset = circumference - (score / 100) * circumference;
-  const color = score >= 75 ? '#00e676' : score >= 50 ? '#FFD600' : score >= 30 ? '#ff9800' : '#FF2D2D';
-
-  const fill = document.getElementById('scoreFill');
-  fill.style.stroke = color;
-  fill.style.strokeDasharray = circumference;
-  setTimeout(() => { fill.style.strokeDashoffset = offset; }, 50);
-
-  const numEl = document.getElementById('scoreNum');
-  numEl.style.color = color;
-  animateNum(numEl, 0, score, 1000);
-
-  document.getElementById('scoreTitle').textContent = r.scoreLabel || 'Resultado';
-  document.getElementById('scoreTitle').style.color = color;
-  document.getElementById('scoreVerdict').textContent = r.verdict || '';
-
-  // TITLES
-  const titlesList = document.getElementById('titlesList');
-  titlesList.innerHTML = '';
-  const titles = Array.isArray(r.titles) ? r.titles.slice(0, 3) : [];
-  titles.forEach((title, i) => {
-    const chars = title.length;
-    const div = document.createElement('div');
-    div.className = 'title-item';
-    div.innerHTML = `
-      <span class="title-num">${i + 1}</span>
-      <div class="title-content">
-        <div class="title-text">${escHtml(title)}</div>
-        <div class="title-chars"><span>${chars}</span> / 70 caracteres</div>
-      </div>
-      <button class="btn-copy" onclick="copyText(${JSON.stringify(title)}, this)">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        Copiar
-      </button>`;
-    titlesList.appendChild(div);
-  });
-
-  // TAGS
-  const tagStr = typeof r.tags === 'string' ? r.tags : (Array.isArray(r.tags) ? r.tags.join(', ') : '');
-  const tagList = document.getElementById('tagsList');
-  tagList.innerHTML = '';
-  const tags = tagStr.split(',').map(t => t.trim()).filter(Boolean);
-  let totalChars = 0;
-  const usedTags = [];
-  tags.forEach(tag => {
-    const needed = totalChars === 0 ? tag.length : tag.length + 2;
-    if (totalChars + needed <= 500) {
-      totalChars += needed;
-      usedTags.push(tag);
-      const chip = document.createElement('span');
-      chip.className = 'tag-chip';
-      chip.textContent = tag;
-      tagList.appendChild(chip);
-    }
-  });
-  const tagsStr = usedTags.join(', ');
-  const counter = document.getElementById('tagsCounter');
-  counter.innerHTML = `<strong>${tagsStr.length}</strong> / 500 caracteres`;
-  counter.className = 'tags-counter' + (tagsStr.length > 500 ? ' over' : '');
-  window._tagsStr = tagsStr;
-
-  // POLICY
-  const issues = Array.isArray(r.policyIssues) ? r.policyIssues.filter(Boolean) : [];
-  const policyCard = document.getElementById('policyCard');
-  const policyItems = document.getElementById('policyItems');
-  policyItems.innerHTML = '';
-
-  if (issues.length === 0) {
-    policyCard.classList.add('policy-ok');
-    policyCard.querySelector('.result-section-title').innerHTML = `
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-      Sem problemas de política detectados`;
-    policyItems.innerHTML = `<div class="policy-item"><div class="policy-dot"></div>Nenhum problema com as políticas do YouTube foi identificado neste vídeo.</div>`;
-  } else {
-    policyCard.classList.remove('policy-ok');
-    policyCard.querySelector('.result-section-title').innerHTML = `
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      Avisos de Políticas do YouTube`;
-    issues.forEach(issue => {
-      const div = document.createElement('div');
-      div.className = 'policy-item';
-      div.innerHTML = `<div class="policy-dot"></div>${escHtml(issue)}`;
-      policyItems.appendChild(div);
-    });
-  }
-
-  // GitHub push card
-  const githubToken = document.getElementById('githubToken').value.trim();
-  const githubRepo = document.getElementById('githubRepo').value.trim();
-  if (githubToken && githubRepo) {
-    document.getElementById('githubPushCard').classList.add('active');
-  }
-
-  // Scroll to results
-  document.getElementById('scoreCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-// ── COPY HELPERS ─────────────────────────────────────────────
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.innerHTML;
-    btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copiado!`;
-    btn.classList.add('copied');
-    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
-  }).catch(() => showToast('Erro', 'Não foi possível copiar.'));
-}
-
-function copyAllTags() {
-  const tags = window._tagsStr || '';
-  navigator.clipboard.writeText(tags).then(() => {
-    const btn = document.getElementById('btnCopyTags');
-    const orig = btn.innerHTML;
-    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copiadas!`;
-    btn.classList.add('copied');
-    setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
-  }).catch(() => showToast('Erro', 'Não foi possível copiar as tags.'));
-}
-
-// ── GITHUB PUSH ──────────────────────────────────────────────
-async function pushToGitHub() {
-  const token = document.getElementById('githubToken').value.trim();
-  const repo = document.getElementById('githubRepo').value.trim();
-  const msg = document.getElementById('commitMsg').value.trim() || 'chore: update TubeBoost AI via auto-deploy';
-  const btn = document.getElementById('btnPush');
-  const status = document.getElementById('pushStatus');
-
-  if (!token || !repo) {
-    status.className = 'push-status error';
-    status.textContent = 'Preencha o Token e o repositório nas configurações.';
-    return;
-  }
-
-  btn.disabled = true;
-  status.className = 'push-status';
-  status.textContent = 'Enviando para o GitHub...';
-
-  try {
-    // Get current file SHA (if exists)
-    const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/index.html`, {
-      headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github.v3+json' }
-    });
-
-    let sha = undefined;
-    if (getRes.ok) {
-      const current = await getRes.json();
-      sha = current.sha;
-    }
-
-    // Read the current page HTML
-    const html = document.documentElement.outerHTML;
-    const encoded = btoa(unescape(encodeURIComponent(html)));
-
-    const body = { message: msg, content: encoded };
-    if (sha) body.sha = sha;
-
-    const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/index.html`, {
-      method: 'PUT',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        Accept: 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!putRes.ok) {
-      const err = await putRes.json();
-      throw new Error(err.message || 'Erro desconhecido do GitHub.');
-    }
-
-    const data = await putRes.json();
-    const pageUrl = `https://${repo.split('/')[0]}.github.io/${repo.split('/')[1]}/`;
-    status.className = 'push-status success';
-    status.innerHTML = `✓ Push realizado! Disponível em: <a href="${pageUrl}" target="_blank" rel="noopener" style="color:var(--green)">${pageUrl}</a>`;
-  } catch (err) {
-    status.className = 'push-status error';
-    status.textContent = '✗ Erro: ' + (err.message || 'Falha no push.');
-  } finally {
-    btn.disabled = false;
-  }
-}
-
-// ── UTILS ────────────────────────────────────────────────────
-function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
-}
-
-function animateNum(el, from, to, duration) {
-  const start = performance.now();
-  function step(now) {
-    const t = Math.min(1, (now - start) / duration);
-    const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    el.textContent = Math.round(from + (to - from) * ease);
-    if (t < 1) requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
-function showToast(title, msg, duration = 5000) {
-  const toast = document.getElementById('toast');
-  document.getElementById('toastTitle').textContent = title;
-  document.getElementById('toastMsg').textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), duration);
-}
-
-function resetApp() {
-  selectedFile = null;
-  analysisResult = null;
-  document.getElementById('fileSelected').style.display = 'none';
-  document.getElementById('videoInput').value = '';
-
-  document.getElementById('uploadCard').style.display = 'block';
-  document.getElementById('categoryCard').style.display = 'block';
-  document.getElementById('configCard').style.display = 'block';
-  document.getElementById('progressCard').classList.remove('active');
-  document.getElementById('resultsSection').classList.remove('active');
-  document.getElementById('githubPushCard').classList.remove('active');
-  document.getElementById('pushStatus').textContent = '';
-
-  // Reset steps
-  for (let i = 1; i <= 3; i++) {
-    const icon = document.getElementById('step' + i + 'icon');
-    icon.className = 'step-icon';
-    const sub = document.getElementById('step' + i + 'sub');
-    if (sub) sub.textContent = 'Aguardando...';
-  }
-  document.getElementById('step1icon').innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>`;
-  document.getElementById('step2icon').innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
-  document.getElementById('step3icon').innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ── INIT ─────────────────────────────────────────────────────
-initCategories();
-initUpload();
-</script>
+<script src="js/app.js"></script>
 </body>
 </html>
