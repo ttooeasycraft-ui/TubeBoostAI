@@ -33,12 +33,31 @@
     <p>Envie seu vídeo e descubra o potencial viral, títulos otimizados e tags ideais para maximizar seu alcance no YouTube.</p>
   </section>
 
+  <!-- AVISO DE SEGURANÇA -->
+  <div class="security-notice" id="securityNotice">
+    <div class="security-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div class="security-text">
+      <strong>Suas chaves ficam apenas no seu dispositivo.</strong>
+      Este site roda 100% no seu navegador — nenhuma informação é enviada para servidores externos além do Google (Gemini) e GitHub, diretamente do seu navegador. Ninguém mais tem acesso.
+    </div>
+    <button class="security-close" onclick="dismissNotice()" title="Fechar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
   <!-- CONFIGURAÇÃO -->
   <div class="card" id="configCard">
     <div class="card-title">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 7a2 2 0 0 1 2 2m4 0a6 6 0 0 1-7.743 5.743L11 17H9v2H7v2H4a1 1 0 0 1-1-1v-2.586a1 1 0 0 1 .293-.707l5.964-5.964A6 6 0 1 1 21 9z"/></svg>
       Configuração
+      <span class="saved-badge" id="savedBadge" style="display:none">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        Salvo localmente
+      </span>
     </div>
+
     <div class="settings-grid">
 
       <!-- GEMINI API KEY -->
@@ -53,11 +72,15 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
+        <span class="field-hint">Nunca compartilhe esta chave com ninguém.</span>
       </div>
 
       <!-- GITHUB -->
       <div class="field-group">
-        <label>GitHub Pages Deploy <span class="hint">(opcional)</span></label>
+        <label>
+          GitHub Pages Deploy
+          <span class="hint"> (opcional)</span>
+        </label>
         <div class="github-fields">
           <div class="input-password-wrap">
             <input type="password" id="githubToken" placeholder="ghp_... (Personal Access Token)" autocomplete="off" />
@@ -67,9 +90,27 @@
           </div>
           <input type="text" id="githubRepo" placeholder="usuario/repositorio" autocomplete="off" value="ttooeasycraft-ui/TubeBoostAI" />
         </div>
+        <span class="field-hint">
+          Use um token com permissão mínima:
+          <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=TubeBoostAI" target="_blank" rel="noopener" style="color:var(--yellow);text-decoration:none;">Criar token seguro →</a>
+        </span>
       </div>
 
     </div>
+
+    <!-- SAVE ROW -->
+    <div class="save-row">
+      <label class="checkbox-label">
+        <input type="checkbox" id="rememberKeys" onchange="handleRememberChange()" />
+        <span class="checkbox-custom"></span>
+        <span>Lembrar neste dispositivo <span class="hint">(salvo no navegador, não no servidor)</span></span>
+      </label>
+      <button class="btn-clear" id="btnClear" onclick="clearSavedKeys()" style="display:none">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        Apagar dados salvos
+      </button>
+    </div>
+
   </div>
 
   <!-- CATEGORIA -->
@@ -125,9 +166,9 @@
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Processando...
     </div>
-    <div class="progress-steps" id="progressSteps">
+    <div class="progress-steps">
 
-      <div class="progress-step" id="step1">
+      <div class="progress-step">
         <div class="step-icon" id="step1icon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>
         </div>
@@ -137,7 +178,7 @@
         </div>
       </div>
 
-      <div class="progress-step" id="step2">
+      <div class="progress-step">
         <div class="step-icon" id="step2icon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
@@ -147,7 +188,7 @@
         </div>
       </div>
 
-      <div class="progress-step" id="step3">
+      <div class="progress-step">
         <div class="step-icon" id="step3icon">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
