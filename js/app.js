@@ -413,15 +413,26 @@ async function analyzeWithPollinations(meta, category) {
 }
 
 function tryParseJSON(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+  // 1. strip markdown fences
+  let s = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+  // 2. try direct parse
+  try { const p = JSON.parse(s); if (p && typeof p === 'object') return p; } catch (_) {}
+  // 3. extract first {...} block from the string (handles extra text around JSON)
+  const m = s.match(/\{[\s\S]*\}/);
+  if (m) { try { const p = JSON.parse(m[0]); if (p && typeof p === 'object') return p; } catch (_) {} }
+  // 4. last resort: truncated JSON — close open braces and retry
   try {
-    const cleaned = raw
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/```\s*$/i, '')
-      .trim();
-    const parsed = JSON.parse(cleaned);
-    return typeof parsed === 'object' ? parsed : null;
-  } catch (_) { return null; }
+    let attempt = s;
+    const opens  = (attempt.match(/\{/g) || []).length;
+    const closes = (attempt.match(/\}/g) || []).length;
+    if (opens > closes) attempt += '}'.repeat(opens - closes);
+    // remove trailing comma before closing brace
+    attempt = attempt.replace(/,\s*\}/g, '}').replace(/,\s*\]/g, ']');
+    const p = JSON.parse(attempt);
+    if (p && typeof p === 'object') return p;
+  } catch (_) {}
+  return null;
 }
 
 // Análise local (fallback sem internet/IA)
@@ -441,7 +452,7 @@ function localAnalysis(meta, category) {
 
   const label = score >= 70 ? 'Alto Potencial' : score >= 55 ? 'Bom' : 'Moderado';
 
-  const catTags: Record<string, string> = {
+  const catTags = {
     Gaming: 'gameplay, jogo, game, gamer, jogando, ps5, xbox, pc, gameplay em português, jogos 2026',
     Vlog: 'vlog, dia a dia, rotina, vida real, cotidiano, vlogs brasileiros, lifestyle',
     Tutorial: 'tutorial, como fazer, passo a passo, aprenda, dica, ensinar, guia completo',
