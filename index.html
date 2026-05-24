@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#07070f" />
   <title>TubeBoost AI — Analise, Cresça e Domine o YouTube</title>
-  <meta name="description" content="Analise vídeos, veja tendências, gere títulos e tags com IA. Alternativa gratuita ao vidIQ." />
+  <meta name="description" content="Analise vídeos, descubra tendências virais, gere títulos e tags com IA. Grátis." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -20,125 +20,127 @@
       <div class="logo-icon">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M10 15l5.19-3L10 9v6zm11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"/></svg>
       </div>
-      <span class="logo-text">Tube<span>Boost</span> AI</span>
+      <span class="logo-text">Tube<span class="logo-accent">Boost</span> AI</span>
     </a>
-    <nav class="top-nav" id="topNav">
-      <button class="tnav-btn active" data-page="analyze" onclick="showPage('analyze')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Analisar
-      </button>
-      <button class="tnav-btn" data-page="trends" onclick="showPage('trends')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-        Tendências
-      </button>
-      <button class="tnav-btn" data-page="history" onclick="showPage('history')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Histórico
-        <span class="tnav-badge" id="historyBadge" style="display:none">0</span>
-      </button>
-    </nav>
     <span class="badge-beta">BETA</span>
   </div>
 </header>
 
+<!-- ── BOTTOM NAV ── -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bnav-btn active" data-page="analyze" onclick="showPage('analyze')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span>Analisar</span>
+  </button>
+  <button class="bnav-btn" data-page="trends" onclick="showPage('trends')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+    <span>Tendências</span>
+  </button>
+  <button class="bnav-btn" data-page="history" onclick="showPage('history')">
+    <div style="position:relative;display:inline-flex;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span class="bnav-badge" id="historyBadgeMobile" style="display:none">0</span>
+    </div>
+    <span>Histórico</span>
+  </button>
+</nav>
+
 <!-- ══════════════════════════════════
      PAGE: ANALISAR
-═══════════════════════════════════ -->
-<main id="pageAnalyze">
+══════════════════════════════════ -->
+<main id="pageAnalyze" class="page-wrap">
 
   <section class="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-tag">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    <div class="hero-pill">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       Powered by Google Gemini AI
     </div>
     <h1>Analise seu vídeo e <span class="accent">exploda</span> no YouTube</h1>
-    <p>Score viral, títulos otimizados e tags perfeitas em segundos. Grátis e sem cadastro.</p>
+    <p class="hero-sub">Score viral, títulos otimizados e tags perfeitas em segundos. Grátis e sem cadastro.</p>
     <div class="hero-stats">
-      <div class="hstat"><span class="hstat-num">100%</span><span class="hstat-label">Gratuito</span></div>
-      <div class="hstat-div"></div>
-      <div class="hstat"><span class="hstat-num">Gemini</span><span class="hstat-label">IA de ponta</span></div>
-      <div class="hstat-div"></div>
-      <div class="hstat"><span class="hstat-num">3</span><span class="hstat-label">Títulos gerados</span></div>
+      <div class="hstat">
+        <span class="hstat-num">100%</span>
+        <span class="hstat-label">Gratuito</span>
+      </div>
+      <div class="hstat-sep"></div>
+      <div class="hstat">
+        <span class="hstat-num">Gemini</span>
+        <span class="hstat-label">IA de ponta</span>
+      </div>
+      <div class="hstat-sep"></div>
+      <div class="hstat">
+        <span class="hstat-num">3</span>
+        <span class="hstat-label">Títulos gerados</span>
+      </div>
     </div>
   </section>
 
   <!-- SELETOR DE MODO -->
   <div class="mode-selector" id="modeSelector">
     <div class="mode-card mode-free" onclick="selectMode('free')">
-      <div class="mode-badge-top">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        GRÁTIS
-      </div>
+      <span class="mode-badge free-badge">✦ GRÁTIS</span>
       <div class="mode-icon free-icon">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       </div>
       <h3>Análise por Link</h3>
       <p>Cole o link do YouTube. Sem precisar de chave de API. Totalmente gratuito.</p>
-      <ul class="mode-features">
-        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Link do YouTube</li>
-        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Sem API Key</li>
-        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Resultado rápido</li>
-        <li class="muted"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Upload de arquivo</li>
+      <ul class="feature-list">
+        <li class="ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Link do YouTube</li>
+        <li class="ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Sem API Key</li>
+        <li class="ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Resultado rápido</li>
+        <li class="no"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Upload de arquivo</li>
       </ul>
-      <div class="mode-cta free-cta">Usar Grátis <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      <div class="mode-btn free-btn">Usar Grátis <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
     </div>
 
-    <div class="mode-divider"><span>ou</span></div>
+    <div class="mode-or"><span>ou</span></div>
 
     <div class="mode-card mode-pro" onclick="selectMode('pro')">
-      <div class="mode-badge-top pro">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        CHAVE PRÓPRIA
-      </div>
+      <span class="mode-badge pro-badge">🔑 CHAVE PRÓPRIA</span>
       <div class="mode-icon pro-icon">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
       </div>
       <h3>Chave Própria</h3>
       <p>Use sua própria API Key do Gemini. Upload de vídeo ou link. Sem limites.</p>
-      <ul class="mode-features">
-        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Link do YouTube</li>
-        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Upload de vídeo</li>
-        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Análise mais profunda</li>
-        <li><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Transcrição do vídeo</li>
+      <ul class="feature-list">
+        <li class="ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Link do YouTube</li>
+        <li class="ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Upload de vídeo</li>
+        <li class="ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Análise mais profunda</li>
+        <li class="ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Transcrição do vídeo</li>
       </ul>
-      <div class="mode-cta pro-cta">Usar com Chave <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      <div class="mode-btn pro-btn">Usar com Chave <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
     </div>
   </div>
 
   <!-- ── PAINEL GRATUITO ── -->
-  <div class="panel" id="panelFree" style="display:none">
-    <div class="panel-header">
+  <div id="panelFree" style="display:none">
+    <div class="panel-back-row">
       <button class="btn-back" onclick="backToSelector()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Voltar
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Voltar
       </button>
-      <div class="panel-mode-tag free">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        Modo Gratuito
-      </div>
+      <span class="panel-tag free-tag">✦ Modo Gratuito</span>
     </div>
 
-    <div class="glass-card">
-      <div class="card-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Categoria do Vídeo</div>
-      <div class="categories-wrap" id="freeCatButtons"></div>
-      <input type="text" id="freeCustomCategory" placeholder="Outra categoria... (ex: ASMR, Unboxing)" maxlength="60" class="input-field" />
+    <div class="card">
+      <div class="card-label">Categoria do Vídeo</div>
+      <div class="cat-wrap" id="freeCatButtons"></div>
+      <input type="text" id="freeCustomCategory" placeholder="Outra categoria... (ex: ASMR, Pets, Finanças)" class="field" />
     </div>
 
-    <div class="glass-card">
-      <div class="card-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Link do YouTube</div>
-      <input type="url" id="freeYtUrl" placeholder="https://www.youtube.com/watch?v=..." class="input-field input-url" />
-      <p class="input-note">Cole o link completo do vídeo (Shorts ou vídeo longo)</p>
+    <div class="card">
+      <div class="card-label">Link do YouTube</div>
+      <input type="url" id="freeYtUrl" placeholder="https://www.youtube.com/watch?v=..." class="field" />
+      <p class="field-hint">Cole o link completo do vídeo (Shorts ou vídeo longo)</p>
 
-      <div class="transcript-toggle" onclick="toggleTranscript('free')">
+      <div class="transcript-row" onclick="toggleTranscript('free')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        <span>Adicionar transcrição do vídeo</span>
-        <span class="transcript-optional">opcional — melhora a análise</span>
-        <svg class="transcript-arrow" id="freeTranscriptArrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        <span>Adicionar transcrição</span>
+        <span class="opt-tag">opcional — melhora a análise</span>
+        <svg class="tr-arrow" id="freeTranscriptArrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div id="freeTranscriptPanel" style="display:none">
-        <textarea id="freeTranscript" class="input-field transcript-area" placeholder="Cole aqui o que é falado no vídeo (transcrição)...&#10;&#10;Você pode obter a transcrição automaticamente:&#10;• No YouTube: clique em ⋯ abaixo do vídeo › Mostrar transcrição&#10;• Ou use Tactiq.io, Otter.ai ou Whisper Online (todos gratuitos)"></textarea>
-        <div class="transcript-tools">
+        <textarea id="freeTranscript" class="field field-area" placeholder="Cole aqui o que é falado no vídeo...&#10;&#10;Como obter: no YouTube clique em ⋯ › Mostrar transcrição.&#10;Ou use: Tactiq.io · Otter.ai · Whisper Online (gratuitos)"></textarea>
+        <div class="tr-tools">
           <span>Ferramentas gratuitas:</span>
           <a href="https://tactiq.io" target="_blank" rel="noopener">Tactiq.io</a>
           <a href="https://otter.ai" target="_blank" rel="noopener">Otter.ai</a>
@@ -146,209 +148,207 @@
         </div>
       </div>
 
-      <button class="btn-analyze" onclick="startFreeAnalysis()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <button class="btn-main" onclick="startFreeAnalysis()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         Analisar Grátis
       </button>
     </div>
 
-    <div class="free-limit-notice">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Modo gratuito usa quota compartilhada e pode ter limitações em horários de pico. Para uso ilimitado, use o modo com chave própria.
-    </div>
+    <p class="limit-note">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Modo gratuito usa quota compartilhada e pode ser lento em horários de pico.
+    </p>
   </div>
 
   <!-- ── PAINEL PRO ── -->
-  <div class="panel" id="panelPro" style="display:none">
-    <div class="panel-header">
+  <div id="panelPro" style="display:none">
+    <div class="panel-back-row">
       <button class="btn-back" onclick="backToSelector()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        Voltar
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Voltar
       </button>
-      <div class="panel-mode-tag pro">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Chave Própria
-      </div>
+      <span class="panel-tag pro-tag">🔑 Chave Própria</span>
     </div>
 
-    <div class="responsibility-notice">
-      <div class="responsibility-header"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><strong>Aviso Importante — Chave Própria</strong></div>
-      <ul class="responsibility-list">
-        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Sua chave fica <strong>somente no seu dispositivo</strong></li>
-        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>Não temos acesso</strong> à sua chave em nenhum momento</li>
-        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Qualquer <strong>gasto gerado</strong> é de sua responsabilidade</li>
-        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Monitore seu uso em <a href="https://aistudio.google.com" target="_blank" rel="noopener">aistudio.google.com</a></li>
+    <div class="notice-box red-notice">
+      <div class="notice-title"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Aviso Importante</div>
+      <ul class="notice-list">
+        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Sua chave fica <strong>somente no seu dispositivo</strong></li>
+        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Não temos acesso à sua chave em nenhum momento</li>
+        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Qualquer gasto é de sua responsabilidade</li>
+        <li><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Monitore em <a href="https://aistudio.google.com" target="_blank" rel="noopener">aistudio.google.com</a></li>
       </ul>
     </div>
 
-    <div class="glass-card">
-      <div class="card-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg> Sua Gemini API Key <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="get-key-link">Obter chave grátis →</a></div>
-      <div class="input-password-wrap">
-        <input type="password" id="proApiKey" placeholder="AIza..." autocomplete="off" class="input-field" />
-        <button class="toggle-pw" onclick="togglePw('proApiKey')" title="Mostrar/ocultar">
+    <div class="card">
+      <div class="card-label">Gemini API Key <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="link-inline">Obter grátis →</a></div>
+      <div class="pw-wrap">
+        <input type="password" id="proApiKey" placeholder="AIza..." autocomplete="off" class="field" />
+        <button class="pw-toggle" onclick="togglePw('proApiKey')">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
       </div>
       <div class="save-row">
-        <label class="checkbox-label">
+        <label class="check-label">
           <input type="checkbox" id="rememberProKey" onchange="handleRememberChange()" />
-          <span class="checkbox-custom"></span>
-          <span>Lembrar neste dispositivo <span class="hint">(só no navegador)</span></span>
+          <span class="check-box"></span>
+          Lembrar neste dispositivo <span class="hint">(só local)</span>
         </label>
-        <button class="btn-clear" id="btnClear" onclick="clearSavedKeys()" style="display:none">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-          Apagar
+        <button class="btn-sm-danger" id="btnClear" onclick="clearSavedKeys()" style="display:none">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Apagar
         </button>
       </div>
     </div>
 
-    <div class="glass-card">
-      <div class="card-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Categoria do Vídeo</div>
-      <div class="categories-wrap" id="proCatButtons"></div>
-      <input type="text" id="proCustomCategory" placeholder="Outra categoria..." maxlength="60" class="input-field" />
+    <div class="card">
+      <div class="card-label">Categoria do Vídeo</div>
+      <div class="cat-wrap" id="proCatButtons"></div>
+      <input type="text" id="proCustomCategory" placeholder="Outra categoria..." class="field" />
     </div>
 
-    <div class="glass-card">
-      <div class="card-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg> Vídeo para Analisar</div>
+    <div class="card">
+      <div class="card-label">Vídeo para Analisar</div>
       <div class="source-tabs">
-        <button class="source-tab active" id="tabLink" onclick="switchSource('link')">
+        <button class="stab active" id="tabLink" onclick="switchSource('link')">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
           Link YouTube
         </button>
-        <button class="source-tab" id="tabUpload" onclick="switchSource('upload')">
+        <button class="stab" id="tabUpload" onclick="switchSource('upload')">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-          Upload de Arquivo
+          Upload
         </button>
       </div>
 
-      <div id="sourceLinkPanel">
-        <input type="url" id="proYtUrl" placeholder="https://www.youtube.com/watch?v=..." class="input-field input-url" style="margin-top:14px" />
-        <p class="input-note">Cole o link completo do vídeo (Shorts ou vídeo longo)</p>
+      <div id="sourceLinkPanel" style="margin-top:14px">
+        <input type="url" id="proYtUrl" placeholder="https://www.youtube.com/watch?v=..." class="field" />
+        <p class="field-hint">Cole o link completo do vídeo</p>
       </div>
 
-      <div id="sourceUploadPanel" style="display:none; margin-top:14px">
+      <div id="sourceUploadPanel" style="display:none;margin-top:14px">
         <div class="upload-zone" id="uploadZone">
-          <input type="file" id="videoInput" accept="video/mp4,video/quicktime,video/avi,video/webm,.mp4,.mov,.avi,.webm" />
-          <div class="upload-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg></div>
+          <input type="file" id="videoInput" accept="video/mp4,video/quicktime,video/avi,video/webm" />
+          <div class="upload-icon-wrap">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          </div>
           <p class="upload-title">Arraste ou toque para selecionar</p>
-          <p class="upload-sub"><strong>MP4 · MOV · AVI · WebM</strong></p>
+          <p class="upload-sub">MP4 · MOV · AVI · WebM</p>
         </div>
-        <div class="file-selected" id="fileSelected" style="display:none">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-          <div class="file-info">
+        <div class="file-row" id="fileSelected" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--red);flex-shrink:0"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          <div style="flex:1;min-width:0">
             <div class="file-name" id="fileName">video.mp4</div>
             <div class="file-size" id="fileSize">0 MB</div>
           </div>
-          <button class="file-remove" onclick="removeFile()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          <button class="file-rm" onclick="removeFile()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
       </div>
 
-      <div class="transcript-toggle" onclick="toggleTranscript('pro')">
+      <div class="transcript-row" onclick="toggleTranscript('pro')">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        <span>Adicionar transcrição do vídeo</span>
-        <span class="transcript-optional">opcional — melhora muito a precisão</span>
-        <svg class="transcript-arrow" id="proTranscriptArrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        <span>Adicionar transcrição</span>
+        <span class="opt-tag">opcional</span>
+        <svg class="tr-arrow" id="proTranscriptArrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div id="proTranscriptPanel" style="display:none">
-        <textarea id="proTranscript" class="input-field transcript-area" placeholder="Cole aqui o que é falado no vídeo (transcrição)...&#10;&#10;Como obter a transcrição:&#10;• No YouTube: clique em ⋯ abaixo do vídeo › Mostrar transcrição&#10;• Ou use Tactiq.io, Otter.ai ou Whisper Online (todos gratuitos)"></textarea>
-        <div class="transcript-tools">
+        <textarea id="proTranscript" class="field field-area" placeholder="Cole aqui a transcrição do vídeo..."></textarea>
+        <div class="tr-tools">
           <span>Ferramentas gratuitas:</span>
           <a href="https://tactiq.io" target="_blank" rel="noopener">Tactiq.io</a>
           <a href="https://otter.ai" target="_blank" rel="noopener">Otter.ai</a>
-          <a href="https://whisper.ai" target="_blank" rel="noopener">Whisper</a>
         </div>
       </div>
 
-      <button class="btn-analyze pro-analyze" onclick="startProAnalysis()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <button class="btn-main btn-red" onclick="startProAnalysis()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         Analisar com Minha Chave
       </button>
     </div>
   </div>
 
   <!-- ── PROGRESSO ── -->
-  <div class="panel" id="progressPanel" style="display:none">
-    <div class="glass-card progress-card">
-      <div class="progress-header">
-        <div class="progress-spinner"></div>
+  <div id="progressPanel" style="display:none">
+    <div class="card" style="text-align:center">
+      <div class="progress-hdr">
+        <div class="spinner"></div>
         <span>Processando seu vídeo...</span>
       </div>
-      <div class="progress-steps">
-        <div class="progress-step">
-          <div class="pstep-icon" id="pstep1icon"></div>
-          <div class="pstep-text">
-            <span class="pstep-label" id="pstep1label">Buscando informações</span>
-            <span class="pstep-sub" id="pstep1sub">Aguardando...</span>
-          </div>
-        </div>
-        <div class="progress-step">
-          <div class="pstep-icon" id="pstep2icon"></div>
-          <div class="pstep-text">
-            <span class="pstep-label">Processando</span>
-            <span class="pstep-sub" id="pstep2sub">Aguardando...</span>
-          </div>
-        </div>
-        <div class="progress-step">
-          <div class="pstep-icon" id="pstep3icon"></div>
-          <div class="pstep-text">
-            <span class="pstep-label">Analisando com IA</span>
-            <span class="pstep-sub" id="pstep3sub">Aguardando...</span>
-          </div>
-        </div>
+      <div class="steps-list">
+        <div class="step-row"><div class="step-ico" id="pstep1icon"></div><div class="step-txt"><span class="step-lbl" id="pstep1label">Buscando informações</span><span class="step-sub" id="pstep1sub">Aguardando...</span></div></div>
+        <div class="step-row"><div class="step-ico" id="pstep2icon"></div><div class="step-txt"><span class="step-lbl">Processando</span><span class="step-sub" id="pstep2sub">Aguardando...</span></div></div>
+        <div class="step-row"><div class="step-ico" id="pstep3icon"></div><div class="step-txt"><span class="step-lbl">Analisando com IA</span><span class="step-sub" id="pstep3sub">Aguardando...</span></div></div>
       </div>
     </div>
   </div>
 
   <!-- ── RESULTADOS ── -->
-  <div class="panel" id="resultsPanel" style="display:none">
-    <div class="score-hero" id="scoreCard">
+  <div id="resultsPanel" style="display:none">
+
+    <div class="score-card" id="scoreCard">
       <div class="score-ring-wrap">
         <svg width="120" height="120" viewBox="0 0 120 120">
-          <circle class="ring-track" cx="60" cy="60" r="52"/>
-          <circle class="ring-fill" id="scoreFill" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="326.73"/>
+          <circle class="ring-bg"   cx="60" cy="60" r="52"/>
+          <circle class="ring-arc"  id="scoreFill" cx="60" cy="60" r="52" stroke-dasharray="326.73" stroke-dashoffset="326.73"/>
         </svg>
-        <div class="ring-center">
-          <span class="ring-num" id="scoreNum">0</span>
-          <span class="ring-label">/ 100</span>
+        <div class="ring-inner">
+          <span class="ring-n" id="scoreNum">0</span>
+          <span class="ring-s">/ 100</span>
         </div>
       </div>
-      <div class="score-body">
-        <div class="score-title" id="scoreTitle">Analisando...</div>
+      <div class="score-info">
+        <div class="score-label" id="scoreTitle">—</div>
         <div class="score-verdict" id="scoreVerdict"></div>
       </div>
     </div>
 
-    <!-- CHECKLIST -->
-    <div class="result-block checklist-block" id="checklistBlock" style="display:none">
-      <div class="result-block-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Checklist do Criador</div>
+    <!-- Checklist -->
+    <div class="result-card checklist-card" id="checklistBlock" style="display:none">
+      <div class="result-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Checklist do Criador
+      </div>
       <div class="checklist-grid" id="checklistItems"></div>
     </div>
 
-    <div class="result-block">
-      <div class="result-block-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Títulos Otimizados</div>
+    <!-- Títulos -->
+    <div class="result-card">
+      <div class="result-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Títulos Otimizados
+      </div>
       <div id="titlesList"></div>
     </div>
 
-    <div class="result-block">
-      <div class="result-block-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg> Tags para YouTube</div>
+    <!-- Tags -->
+    <div class="result-card">
+      <div class="result-label">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Tags para YouTube
+      </div>
       <div class="tags-wrap" id="tagsList"></div>
-      <div class="tags-footer">
-        <div class="tags-counter" id="tagsCounter">0 / 500 caracteres</div>
-        <button class="btn-copy-all" id="btnCopyTags" onclick="copyAllTags()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar todas</button>
+      <div class="tags-foot">
+        <span class="tags-count" id="tagsCounter">0 / 500 caracteres</span>
+        <button class="btn-copy-all" id="btnCopyTags" onclick="copyAllTags()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copiar todas
+        </button>
       </div>
     </div>
 
-    <div class="result-block policy-block" id="policyCard">
-      <div class="result-block-title" id="policyTitle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg> Políticas</div>
-      <div class="policy-items" id="policyItems"></div>
+    <!-- Políticas -->
+    <div class="result-card" id="policyCard">
+      <div class="result-label" id="policyTitle">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        Políticas
+      </div>
+      <div id="policyItems"></div>
     </div>
 
+    <!-- Ações -->
     <div class="result-actions">
-      <button class="btn-reset" onclick="resetApp()">
+      <button class="btn-outline" onclick="resetApp()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.38"/></svg>
         Analisar outro vídeo
       </button>
-      <button class="btn-history-save" onclick="showPage('history')">
+      <button class="btn-outline btn-outline-y" onclick="showPage('history')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         Ver Histórico
       </button>
@@ -359,88 +359,76 @@
 
 <!-- ══════════════════════════════════
      PAGE: TENDÊNCIAS
-═══════════════════════════════════ -->
-<main id="pageTrends" style="display:none">
-  <section class="page-header-section">
-    <div class="page-header-icon trends-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+══════════════════════════════════ -->
+<main id="pageTrends" class="page-wrap" style="display:none">
+
+  <section class="page-hero">
+    <div class="page-hero-icon" style="background:rgba(255,45,45,0.1);border-color:rgba(255,45,45,0.25);color:var(--red)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
     </div>
     <div>
-      <h2>Tendências do YouTube</h2>
-      <p>Veja o que está em alta por categoria e encontre inspiração para seu próximo vídeo</p>
+      <h2>Tendências Virais</h2>
+      <p>Descubra o que está bombando agora e crie vídeos sobre assuntos em alta</p>
     </div>
   </section>
 
-  <div class="glass-card">
-    <div class="card-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Selecione a categoria</div>
-    <div class="categories-wrap" id="trendsCatButtons"></div>
+  <div class="trends-search-box">
+    <div class="search-input-wrap">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="trendsSearchInput" class="search-input" placeholder="Pesquise um tema... ex: Minecraft, Culinária, IA" maxlength="80" />
+      <button class="search-clear" id="searchClear" onclick="clearTrendsSearch()" style="display:none">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <button class="btn-search" onclick="searchTrends()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Buscar
+    </button>
+  </div>
+
+  <div class="quick-topics">
+    <span class="quick-label">Temas populares:</span>
+    <div class="quick-pills" id="quickPills"></div>
   </div>
 
   <div id="trendsContent">
-    <div class="empty-state">
+    <div class="trends-empty">
       <div class="empty-icon">🔥</div>
-      <p>Selecione uma categoria acima para ver as tendências</p>
+      <p>Pesquise um tema acima ou clique em um tópico popular para ver as tendências</p>
     </div>
   </div>
+
 </main>
 
 <!-- ══════════════════════════════════
      PAGE: HISTÓRICO
-═══════════════════════════════════ -->
-<main id="pageHistory" style="display:none">
-  <section class="page-header-section">
-    <div class="page-header-icon history-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+══════════════════════════════════ -->
+<main id="pageHistory" class="page-wrap" style="display:none">
+
+  <section class="page-hero">
+    <div class="page-hero-icon" style="background:rgba(255,214,0,0.1);border-color:rgba(255,214,0,0.25);color:var(--yellow)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
     </div>
     <div>
       <h2>Histórico de Análises</h2>
-      <p>Todas as análises feitas neste dispositivo ficam salvas aqui</p>
+      <p>Todas as análises feitas neste dispositivo ficam salvas aqui automaticamente</p>
     </div>
   </section>
 
-  <div id="historyContent">
-    <div class="empty-state">
-      <div class="empty-icon">📋</div>
-      <p>Nenhuma análise ainda. Analise seu primeiro vídeo!</p>
-      <button class="btn-analyze" style="max-width:220px;margin:16px auto 0" onclick="showPage('analyze')">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Analisar agora
-      </button>
-    </div>
-  </div>
+  <div id="historyContent"></div>
+
 </main>
 
-<!-- ── BOTTOM NAV (mobile) ── -->
-<nav class="bottom-nav">
-  <button class="bnav-btn active" data-page="analyze" onclick="showPage('analyze')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <span>Analisar</span>
-  </button>
-  <button class="bnav-btn" data-page="trends" onclick="showPage('trends')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-    <span>Tendências</span>
-  </button>
-  <button class="bnav-btn" data-page="history" onclick="showPage('history')">
-    <div class="bnav-icon-wrap">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <span class="bnav-badge" id="historyBadgeMobile" style="display:none">0</span>
-    </div>
-    <span>Histórico</span>
-  </button>
-</nav>
-
-<!-- FOOTER -->
+<!-- ── FOOTER ── -->
 <footer>
-  <div class="footer-inner">
-    <p class="footer-disclaimer"><strong>⚠ Aviso:</strong> Os resultados são sugestões geradas por IA e não garantem aceitação, monetização ou visibilidade pelo YouTube. O TubeBoost AI não tem afiliação com o YouTube ou Google.</p>
-    <p class="footer-copy">© 2026 TubeBoost AI &nbsp;·&nbsp; <span>♥</span> Google Gemini &nbsp;·&nbsp; Somente YouTube (BETA)</p>
-  </div>
+  <p class="footer-disc"><strong>⚠ Aviso:</strong> Os resultados são sugestões geradas por IA e não garantem aceitação, monetização ou visibilidade pelo YouTube. O TubeBoost AI não tem afiliação com o YouTube ou Google.</p>
+  <p class="footer-copy">© 2026 TubeBoost AI &nbsp;·&nbsp; <span style="color:var(--red)">♥</span> Google Gemini &nbsp;·&nbsp; Somente YouTube (BETA)</p>
 </footer>
 
-<!-- TOAST -->
+<!-- ── TOAST ── -->
 <div class="toast" id="toast">
-  <div class="toast-title" id="toastTitle">Erro</div>
-  <div class="toast-msg" id="toastMsg"></div>
+  <div class="toast-title" id="toastTitle">Aviso</div>
+  <div class="toast-msg"   id="toastMsg"></div>
 </div>
 
 <script src="js/app.js"></script>
